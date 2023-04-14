@@ -18,9 +18,11 @@ export default function Root() {
         <Suspense>
           <ErrorBoundary>
             <Header />
-            <Routes>
-              <FileRoutes />
-            </Routes>
+            <main class="pb-16">
+              <Routes>
+                <FileRoutes />
+              </Routes>
+            </main>
             <Footer />
           </ErrorBoundary>
         </Suspense>

@@ -31,9 +31,9 @@ export default function Input(props: {
     props
   );
 
-  function onKeyPress(event) {
-    if (event.keyCode === 13) {
-      props.onEnter();
+  function onKeyPress(event: KeyboardEvent) {
+    if (event.code === "Enter") {
+      props.onEnter!!();
     }
   }
 
@@ -52,7 +52,7 @@ export default function Input(props: {
         min={props.min}
         disabled={props.disabled}
         maxlength={props.maxlength}
-        onInput={(event) => props.onChange(event.target.value)}
+        onInput={(event) => props.onChange!!(event.target.value)}
         onKeyPress={onKeyPress}
       />
     </div>

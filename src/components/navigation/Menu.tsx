@@ -4,6 +4,7 @@ import GearIcon from "~/components/ui/icons/GearIcon";
 import LoginIcon from "~/components/ui/icons/LoginIcon";
 import LogoutIcon from "~/components/ui/icons/LogoutIcon";
 import NewsIcon from "~/components/ui/icons/NewsIcon";
+import RegistrationIcon from "~/components/ui/icons/RegistrationIcon";
 import { clearAccountStore } from "~/lib/stores/account-store";
 import authService from "~/lib/supabase/auth-service";
 
@@ -34,10 +35,16 @@ export default function Menu({ isLoggendIn = false }) {
           </button>
         </>
       ) : (
-        <A href="/login" class="flex h-8 items-center gap-3">
-          <LoginIcon />
-          Login
-        </A>
+        <>
+          <A href="/login" class="flex h-8 items-center gap-3">
+            <LoginIcon />
+            Login
+          </A>
+          <A href="/registration" class="flex h-8 items-center gap-3">
+            <RegistrationIcon />
+            Registrieren
+          </A>
+        </>
       )}
       <div class="mt-8">
         <LegalFooter />

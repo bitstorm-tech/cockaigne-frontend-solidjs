@@ -40,8 +40,8 @@ export default function Login() {
           Einloggen
         </Button>
         <span class="pt-10 text-center text-sm">
-          <A href="/registration">Registrieren</A> // <A href="/password">Passwort vergessen</A> //{" "}
-          <A href={`/confirm/${email()}`}>Account aktivieren</A>
+          <A href="/registration">Registrieren</A> // <A href="/password-reset">Passwort vergessen</A> //{" "}
+          <A href={`/activate/${email()}`}>Account aktivieren</A>
         </span>
       </div>
       <Alert show={errorMessage().length > 0} onConfirm={() => setErrorMessage("")}>

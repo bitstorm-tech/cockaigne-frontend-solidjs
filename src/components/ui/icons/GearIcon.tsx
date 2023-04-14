@@ -1,6 +1,6 @@
 import { mergeProps } from "solid-js";
 
-export default function GearIcon(props: { size: number }) {
+export default function GearIcon(props: { size?: number }) {
   props = mergeProps({ size: 1.5 }, props);
   const style = `height: ${props.size}rem; width: ${props.size}rem`;
 
