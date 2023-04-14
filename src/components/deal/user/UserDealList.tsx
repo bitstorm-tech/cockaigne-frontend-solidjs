@@ -1,5 +1,5 @@
 import { createSignal, For, mergeProps, Show } from "solid-js";
-import { Link } from "solid-start";
+import { A } from "solid-start";
 import DealListContainer from "~/components/deal/DealListContainer";
 import UserDeal from "~/components/deal/user/UserDeal";
 import EmptyContent from "~/components/ui/EmptyContent";
@@ -23,13 +23,13 @@ export default function UserDealList(props: { deals: ActiveDeal[]; loading?: boo
         <EmptyContent>
           <p>Aktuell gibt es leider keine Deals in deiner Nähe :(</p>
           <p>
-            <Link href="/map?showFilter=true">
+            <A href="/map?showFilter=true">
               <u>Filter anpassen</u>
-            </Link>
-            oder
-            <Link href="/map">
+            </A>
+            {" oder "}
+            <A href="/map">
               <u>Standort ändern</u>
-            </Link>
+            </A>
             !
           </p>
         </EmptyContent>

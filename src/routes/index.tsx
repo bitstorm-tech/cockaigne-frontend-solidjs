@@ -1,5 +1,5 @@
-import { useNavigate } from "@solidjs/router";
 import { onMount } from "solid-js";
+import { useNavigate } from "solid-start";
 import sessionStore from "~/lib/stores/session-store";
 
 export default function Home() {
