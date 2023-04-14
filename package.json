@@ -1,5 +1,5 @@
 {
-  "name": "solidjs-starter-test",
+  "name": "cockaigne-frontend",
   "scripts": {
     "dev": "solid-start dev",
     "build": "solid-start build",
@@ -36,6 +36,6 @@
     "vite": "4.2.1"
   },
   "engines": {
-    "node": ">=16"
+    "node": ">=18"
   }
 }
