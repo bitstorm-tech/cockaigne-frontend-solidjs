@@ -3,12 +3,18 @@ import { A } from "solid-start";
 import CategoryIcon from "~/components/ui/CategoryIcon";
 import { ActiveDeal } from "~/lib/supabase/public-types";
 
+function ignoreClick(event: MouseEvent) {
+  event.stopPropagation();
+  event.preventDefault();
+}
+
 export default function DealContainer(props: {
   deal: ActiveDeal;
   showDetails?: boolean;
   showCompanyName?: boolean;
   onClick?: () => void;
   children: JSXElement;
+  rightAction?: JSXElement;
 }) {
   props = mergeProps({ showDetails: false, showCompanyName: true }, props);
 
@@ -30,9 +36,9 @@ export default function DealContainer(props: {
             <CategoryIcon categoryId={props.deal.category_id || 0} />
             <div class="text-[#fff4eb]">{props.deal.title}</div>
           </div>
-          <button class="mr-3" onClick={props.onClick} style="color: {category.color}">
-            <slot name="right-action" />
-          </button>
+          <div onClick={ignoreClick} class="mr-3" style="color: {category.color}">
+            {props.rightAction}
+          </div>
         </div>
         <Show when={props.showDetails}>{props.children}</Show>
       </div>
