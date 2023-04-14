@@ -35,13 +35,13 @@ export default function User() {
       <UserHeader username={username()} address={address()} imageUrl={profileImageUrl()} deals={1} favoriteDealers={2} hotDeals={3} />
       <div class="tabs mb-1 mt-6 flex max-h-8">
         <button onClick={() => setTabIndex(0)} class="tab-bordered tab grow" classList={{ "tab-active": tabIndex() === 0 }}>
-          <StarIcon active={tabIndex() !== 0} />
+          <StarIcon outline={tabIndex() !== 0} />
         </button>
         <button onClick={() => setTabIndex(1)} class="tab-bordered tab grow" classList={{ "tab-active": tabIndex() === 1 }}>
-          <FireIcon active={tabIndex() !== 1} />
+          <FireIcon outline={tabIndex() !== 1} />
         </button>
         <button onClick={() => setTabIndex(2)} class="tab-bordered tab grow" classList={{ "tab-active": tabIndex() === 2 }}>
-          <HeartIcon active={tabIndex() !== 2} />
+          <HeartIcon outline={tabIndex() !== 2} />
         </button>
       </div>
       <div class="h-full overflow-auto">

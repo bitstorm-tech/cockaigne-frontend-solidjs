@@ -12,22 +12,22 @@ export default function Footer() {
       {sessionStore.isDealer ? (
         <>
           <A href="/" activeClass="">
-            <HomeIcon outline={currentPage() === "home"} />
+            <HomeIcon outline={currentPage() !== "home"} />
           </A>
           <A href={`/deals/overview/${sessionStore.userId}`} activeClass="">
-            <DealsOverviewIcon outline={currentPage() === "dealOverview"} />
+            <DealsOverviewIcon outline={currentPage() !== "dealOverview"} />
           </A>
         </>
       ) : (
         <>
           <A href="/" activeClass="">
-            <HomeIcon outline={currentPage() === "home"} />
+            <HomeIcon outline={currentPage() !== "home"} />
           </A>
           <A href="/top" activeClass="">
-            <TopIcon outline={currentPage() === "top"} />
+            <TopIcon outline={currentPage() !== "top"} />
           </A>
           <A href="/map" activeClass="">
-            <MapIcon outline={currentPage() === "map"} />
+            <MapIcon outline={currentPage() !== "map"} />
           </A>
         </>
       )}
