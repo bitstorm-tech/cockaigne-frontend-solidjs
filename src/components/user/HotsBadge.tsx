@@ -1,0 +1,10 @@
+import FireIcon from "~/components/ui/icons/FireIcon";
+
+export default function HotsBadge(props: { number: number }) {
+  return (
+    <span class="badge gap-2 border border-[#2c363a] bg-transparent text-[#69828c]">
+      <FireIcon size={0.8} />
+      {props.number}
+    </span>
+  );
+}
