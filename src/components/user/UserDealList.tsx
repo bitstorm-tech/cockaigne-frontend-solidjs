@@ -1,32 +1,25 @@
-import { createResource, createSignal, For, Show, Suspense } from "solid-js";
+import { createSignal, For, Show, Suspense } from "solid-js";
 import { A } from "solid-start";
 import DealListContainer from "~/components/deal/DealListContainer";
 import EmptyContent from "~/components/ui/EmptyContent";
 import LoadingSpinner from "~/components/ui/icons/LoadingSpinner";
 import UserDeal from "~/components/user/UserDeal";
-import dealService from "~/lib/supabase/deal-service";
-import locationService from "~/lib/supabase/location-service";
-
-async function fetchDeals() {
-  const filter = await locationService.createFilterByCurrentLocationAndSelectedCategories();
-  return await dealService.getDealsByFilter(filter);
-}
+import { ActiveDeal } from "~/lib/supabase/public-types";
 
 const loading = (
   <EmptyContent>
-    <LoadingSpinner size={4} />
+    <LoadingSpinner size={3} />
     <span>Mal sehen welche Deals es hier so gibt ...</span>
   </EmptyContent>
 );
 
-export default function UserDealList() {
+export default function UserDealList(props: { deals: ActiveDeal[] }) {
   const [openDetailsIndex, setOpenDetailsIndex] = createSignal(-1);
-  const [deals] = createResource(fetchDeals);
 
   return (
     <DealListContainer>
       <Suspense fallback={loading}>
-        <Show when={deals()?.length === 0}>
+        <Show when={props.deals?.length === 0}>
           <EmptyContent>
             <p>Aktuell gibt es leider keine Deals in deiner Nähe :(</p>
             <p>
@@ -41,7 +34,7 @@ export default function UserDealList() {
             </p>
           </EmptyContent>
         </Show>
-        <For each={deals()}>
+        <For each={props.deals}>
           {(deal, i) => (
             <UserDeal
               deal={deal}

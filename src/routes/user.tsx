@@ -1,4 +1,4 @@
-import { createSignal, onMount } from "solid-js";
+import { createResource, createSignal, onMount } from "solid-js";
 import FireIcon from "~/components/ui/icons/FireIcon";
 import HeartIcon from "~/components/ui/icons/HeartIcon";
 import StarIcon from "~/components/ui/icons/StarIcon";
@@ -7,10 +7,19 @@ import UserFavoriteDealerList from "~/components/user/UserFavoriteDealerList";
 import UserHeader from "~/components/user/UserHeader";
 import UserHotDealList from "~/components/user/UserHotDealList";
 import { setCurrentPage } from "~/lib/stores/navigation-store";
+import dealService from "~/lib/supabase/deal-service";
+import locationService from "~/lib/supabase/location-service";
+
+async function fetchDeals() {
+  const filter = await locationService.createFilterByCurrentLocationAndSelectedCategories();
+  return await dealService.getDealsByFilter(filter);
+}
 
 export default function User() {
   onMount(() => setCurrentPage("home"));
   const [tabIndex, setTabIndex] = createSignal(0);
+
+  const [deals] = createResource(fetchDeals);
 
   return (
     <>
@@ -27,7 +36,7 @@ export default function User() {
         </button>
       </div>
       <div class="h-full overflow-auto">
-        {tabIndex() === 0 && <UserDealList />}
+        {tabIndex() === 0 && <UserDealList deals={deals()!} />}
         {tabIndex() === 1 && <UserHotDealList />}
         {tabIndex() === 2 && <UserFavoriteDealerList />}
       </div>
