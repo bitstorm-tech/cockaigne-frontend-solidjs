@@ -1,4 +1,5 @@
-import { createResource, mergeProps, Suspense } from "solid-js";
+import { createResource, mergeProps, Show, Suspense } from "solid-js";
+import { menuOpen } from "~/lib/stores/navigation-store";
 import storageService from "~/lib/supabase/storage-service";
 
 export default function ProfileImage(props: { size?: number }) {
@@ -8,12 +9,14 @@ export default function ProfileImage(props: { size?: number }) {
   const [profileImageUrl] = createResource(async () => await storageService.getProfileImage());
 
   return (
-    <div class="avatar cursor-pointer">
-      <div class="rounded-full bg-gray-500 ring-2 ring-[#556368]" style={style}>
+    <Show when={!menuOpen()}>
+      <div class="avatar cursor-pointer">
         <Suspense>
-          <img loading="lazy" src={profileImageUrl()} alt="Profile" />
+          <div class="rounded-full ring-2 ring-[#556368]" style={style}>
+            <img loading="lazy" src={profileImageUrl()} alt="Profile" />
+          </div>
         </Suspense>
       </div>
-    </div>
+    </Show>
   );
 }

@@ -1,4 +1,3 @@
-import { selectedCategoriesStore } from "$lib/stores/category.store";
 import { debounce } from "lodash";
 import { Feature, View } from "ol";
 import type { Coordinate } from "ol/coordinate";
@@ -13,14 +12,11 @@ import { useGeographic } from "ol/proj";
 import OSM from "ol/source/OSM";
 import VectorSource from "ol/source/Vector";
 import { Fill, Icon, Stroke, Style } from "ol/style";
-import { get } from "svelte/store";
-import type { DealFilter } from "./database/deal/deal.model";
-import type { Position } from "./geo/geo.types";
-import { fromOpenLayersCoordinate, toOpenLayersCoordinate } from "./geo/geo.types";
+import { fromOpenLayersCoordinate, Position, toOpenLayersCoordinate } from "~/lib/geo/geo.types";
+import dealService, { DealFilter } from "~/lib/supabase/deal-service";
+import locationService from "~/lib/supabase/location-service";
+import { ActiveDeal } from "~/lib/supabase/public-types";
 import { getIconPathById } from "./icon-mapping";
-import dealService from "./supabase/deal-service";
-import locationService from "./supabase/location-service";
-import type { ActiveDeal } from "./supabase/public-types";
 
 export class MapService {
   private map!: Map;
@@ -34,7 +30,7 @@ export class MapService {
 
   private updateDeals = debounce(async (extent: Extent) => {
     const filter: DealFilter = {
-      categoryIds: get(selectedCategoriesStore),
+      categoryIds: [],
       extent
     };
 

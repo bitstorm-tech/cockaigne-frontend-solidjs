@@ -16,7 +16,7 @@ export default function UserHeader() {
     <div class="flex justify-between text-[#dbdce6]">
       <div class="flex w-full justify-between">
         <div class="m-4 flex flex-col gap-4 pt-2">
-          <div class="flex justify-between fill-current text-[#69828c]">
+          <div class="flex gap-1.5 fill-current text-[#69828c]">
             <DealsBadge number={1} />
             <HotsBadge number={2} />
             <FavoriteDealerBadge number={3} />

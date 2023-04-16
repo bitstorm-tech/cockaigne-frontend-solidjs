@@ -1,6 +1,12 @@
 import { mergeProps } from "solid-js";
 
-export default function Checkbox(props: { label: string; id?: string; disabled?: boolean; onChange?: (value: boolean) => void }) {
+export default function Checkbox(props: {
+  label: string;
+  id?: string;
+  checked?: boolean;
+  disabled?: boolean;
+  onChange?: (value: boolean) => void;
+}) {
   props = mergeProps(
     {
       id: props.label.toLowerCase(),
@@ -19,6 +25,7 @@ export default function Checkbox(props: { label: string; id?: string; disabled?:
           type="checkbox"
           onChange={(e) => props.onChange!(e.target.checked)}
           disabled={props.disabled}
+          checked={props.checked}
         />
         <span class="label-text">{props.label}</span>
       </label>

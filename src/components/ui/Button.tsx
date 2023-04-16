@@ -1,4 +1,4 @@
-import { mergeProps, Show } from "solid-js";
+import { JSXElement, mergeProps, Show } from "solid-js";
 
 export default function Button(props: {
   loading?: boolean;
@@ -7,10 +7,10 @@ export default function Button(props: {
   circle?: boolean;
   error?: boolean;
   disabled?: boolean;
-  children?: string;
+  children?: JSXElement;
   onClick?: () => void;
 }) {
-  const _props = mergeProps(
+  props = mergeProps(
     {
       loading: false,
       warning: false,
@@ -18,7 +18,6 @@ export default function Button(props: {
       circle: false,
       error: false,
       disabled: false,
-      children: "",
       onClick: () => {}
     },
     props
@@ -26,20 +25,20 @@ export default function Button(props: {
 
   return (
     <button
-      disabled={_props.disabled}
+      disabled={props.disabled}
       class="btn"
       classList={{
-        loading: _props.loading,
-        "btn-primary": !_props.warning,
-        "btn-warning": _props.warning,
-        "text-gray-200": _props.warning,
-        "btn-sm": _props.small,
-        "btn-circle": _props.circle,
-        "btn-error": _props.error
+        loading: props.loading,
+        "btn-primary": !props.warning,
+        "btn-warning": props.warning,
+        "text-gray-200": props.warning,
+        "btn-sm": props.small,
+        "btn-circle": props.circle,
+        "btn-error": props.error
       }}
-      onClick={_props.onClick}
+      onClick={props.onClick}
     >
-      <Show when={!_props.loading}>{_props.children}</Show>
+      <Show when={!props.loading}>{props.children}</Show>
     </button>
   );
 }
