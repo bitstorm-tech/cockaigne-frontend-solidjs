@@ -1,13 +1,18 @@
-import { createSignal, Show } from "solid-js";
+import { createEffect, createSignal, Show } from "solid-js";
 import { A } from "solid-start";
 import MemberStatus from "~/components/navigation/MemberStatus";
 import Menu from "~/components/navigation/Menu";
 import CrossIcon from "~/components/ui/icons/CrossIcon";
 import MenuIcon from "~/components/ui/icons/MenuIcon";
+import { setMenuOpen } from "~/lib/stores/navigation-store";
 import sessionStore from "~/lib/stores/session-store";
 
 export default function Header() {
   const [showMenu, setShowMenu] = createSignal(false);
+
+  createEffect(() => {
+    setMenuOpen(showMenu());
+  });
 
   function toggleMenu() {
     setShowMenu(!showMenu());

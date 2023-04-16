@@ -122,9 +122,27 @@ async function register(registrationData: RegistrationData): Promise<string | un
   }
 }
 
+async function getUsername(): Promise<string> {
+  const userId = await authService.getUserId();
+
+  if (!userId) {
+    return "Anonymous";
+  }
+
+  const { data, error } = await supabase.from("accounts").select("username").eq("id", userId).single();
+
+  if (error) {
+    console.log("Can't get username:", error);
+    return "Anonymous";
+  }
+
+  return data.username;
+}
+
 export default {
-  getDefaultCategory,
   getAccount,
+  getDefaultCategory,
+  getUsername,
   updateAccount,
   register
 };

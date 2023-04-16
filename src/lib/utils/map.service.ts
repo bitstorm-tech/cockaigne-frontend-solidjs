@@ -1,13 +1,13 @@
 import { selectedCategoriesStore } from "$lib/stores/category.store";
 import { debounce } from "lodash";
 import { Feature, View } from "ol";
-import Map from "ol/Map";
 import type { Coordinate } from "ol/coordinate";
 import type { Extent } from "ol/extent";
 import { Point } from "ol/geom";
 import Circle from "ol/geom/Circle";
 import TileLayer from "ol/layer/Tile";
 import VectorLayer from "ol/layer/Vector";
+import Map from "ol/Map";
 import "ol/ol.css";
 import { useGeographic } from "ol/proj";
 import OSM from "ol/source/OSM";
@@ -166,7 +166,7 @@ export class MapService {
 
     const style = new Style({
       image: new Icon({
-        src: getIconPathById(deal.category_id!!),
+        src: getIconPathById(deal.category_id!),
         scale: 0.08
       })
     });

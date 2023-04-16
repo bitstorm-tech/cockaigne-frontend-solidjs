@@ -1,5 +1,10 @@
+import { jwtVerify } from "jose";
+import { isServer } from "solid-js/web";
+import { useServerContext } from "solid-start";
 import sessionStore from "~/lib/stores/session-store";
 import { supabase, translateError } from "~/lib/supabase/supabase-client";
+
+const JWT_KEY = new TextEncoder().encode(import.meta.env.VITE_SUPABASE_JWT_KEY);
 
 export interface Session {
   userId?: string;
@@ -43,8 +48,77 @@ async function logout() {
 }
 
 async function getUserId(): Promise<string | undefined> {
+  if (isServer) {
+    const ctx = useServerContext();
+
+    if (!ctx.request) {
+      return;
+    }
+
+    const tokens = await extractTokensFromRequest(ctx.request);
+
+    if (tokens) {
+      await setSupabaseTokens(tokens);
+    }
+
+    try {
+      const { payload } = await jwtVerify(tokens?.accessToken || "", JWT_KEY);
+      return payload.sub;
+    } catch {
+      return;
+    }
+  }
+
   const session = await getSession();
   return session.userId;
+}
+
+type SupabaseTokens = {
+  accessToken: string;
+  refreshToken: string;
+};
+
+async function extractTokensFromRequest(request: Request): Promise<SupabaseTokens | undefined> {
+  const cookies = request.headers.get("cookie");
+
+  if (!cookies) {
+    return;
+  }
+
+  const accessTokenString = cookies.split(";").find((value) => value.includes("my-access-token"));
+  const refreshTokenString = cookies.split(";").find((value) => value.includes("my-refresh-token"));
+
+  if (!accessTokenString || !refreshTokenString) {
+    return;
+  }
+
+  const accessToken = accessTokenString.split("=")[1].trim();
+  const refreshToken = refreshTokenString.split("=")[1].trim();
+
+  return {
+    accessToken,
+    refreshToken
+  };
+}
+
+async function setSupabaseTokens(tokens: SupabaseTokens) {
+  const { data, error } = await supabase.auth.getSession();
+
+  if (error) {
+    console.log("Can't set supabase session in server:", error);
+    return;
+  }
+
+  const currentSession = data.session;
+
+  if (currentSession && currentSession.access_token && currentSession.refresh_token) {
+    return;
+  }
+
+  await supabase.auth.setSession({
+    access_token: tokens.accessToken,
+    refresh_token: tokens.refreshToken
+  });
 }
 
 supabase.auth.onAuthStateChange((event, session) => {

@@ -1,5 +1,4 @@
 // @refresh reload
-import { Suspense } from "solid-js";
 import { Body, ErrorBoundary, FileRoutes, Head, Html, Link, Meta, Routes, Scripts, Title } from "solid-start";
 import Footer from "~/components/navigation/Footer";
 import Header from "~/components/navigation/Header";
@@ -15,17 +14,15 @@ export default function Root() {
         <Meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, viewport-fit=cover" />
       </Head>
       <Body>
-        <Suspense>
-          <ErrorBoundary>
-            <Header />
-            <main class="pb-16">
-              <Routes>
-                <FileRoutes />
-              </Routes>
-            </main>
-            <Footer />
-          </ErrorBoundary>
-        </Suspense>
+        <ErrorBoundary>
+          <Header />
+          <main class="pb-16">
+            <Routes>
+              <FileRoutes />
+            </Routes>
+          </main>
+          <Footer />
+        </ErrorBoundary>
         <Scripts />
       </Body>
     </Html>

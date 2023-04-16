@@ -17,7 +17,7 @@ export default function Checkbox(props: { label: string; id?: string; disabled?:
           id={props.id}
           class="checkbox"
           type="checkbox"
-          onChange={(e) => props.onChange!!(e.target.checked)}
+          onChange={(e) => props.onChange!(e.target.checked)}
           disabled={props.disabled}
         />
         <span class="label-text">{props.label}</span>

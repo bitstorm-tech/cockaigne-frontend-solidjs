@@ -7,8 +7,10 @@ export interface Position {
 }
 
 export const munichPosition: Position = {
-  longitude: 11.576124,
-  latitude: 48.137154
+  // longitude: 11.576124,
+  // latitude: 48.137154
+  longitude: 10.447683,
+  latitude: 51.163361
 };
 
 export function toOpenLayersCoordinate(position: Position): Coordinate {

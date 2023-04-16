@@ -12,7 +12,7 @@ export default function UserDealDetails(props: { deal: ActiveDeal }) {
 
   return (
     <DealDetailsContainer deal={props.deal}>
-      <span class="py-4 text-xs">Endet am {formatDate(props.deal.start!!, +props.deal.duration!! * 60)}</span>
+      <span class="py-4 text-xs">Endet am {formatDate(props.deal.start!, +props.deal.duration! * 60)}</span>
       <div class="flex h-6 justify-between">
         <div class="flex items-center gap-3">
           <button onClick={like}>

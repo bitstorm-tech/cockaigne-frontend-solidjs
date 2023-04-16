@@ -36,7 +36,7 @@ export default function DealContainer(props: {
             <CategoryIcon categoryId={props.deal.category_id || 0} />
             <div class="text-[#fff4eb]">{props.deal.title}</div>
           </div>
-          <div onClick={ignoreClick} class="mr-3" style="color: {category.color}">
+          <div onClick={ignoreClick} class="mr-3">
             {props.rightAction}
           </div>
         </div>

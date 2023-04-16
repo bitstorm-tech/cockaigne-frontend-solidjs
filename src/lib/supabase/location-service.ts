@@ -1,6 +1,8 @@
+import { addressToShortString, getAddress } from "~/lib/geo/address.service";
+import { munichPosition, Position, toPostGisPoint } from "~/lib/geo/geo.types";
 import authService from "~/lib/supabase/auth-service";
+import { DealFilter } from "~/lib/supabase/deal-service";
 import { supabase } from "./supabase-client";
-import { Position, munichPosition, toPostGisPoint } from "~/lib/geo/geo.types";
 
 async function useCurrentLocation(): Promise<boolean> {
   const userId = await authService.getUserId();
@@ -66,10 +68,12 @@ async function createFilterByCurrentLocationAndSelectedCategories(): Promise<Dea
   return {
     categoryIds: result2.data.map((result) => result.category_id),
     radius: data.search_radius / 2 ?? 250,
-    location: {
-      longitude: data.location.coordinates[0],
-      latitude: data.location.coordinates[1]
-    }
+    location: data.location
+      ? {
+          longitude: data.location.coordinates[0],
+          latitude: data.location.coordinates[1]
+        }
+      : munichPosition
   };
 }
 
@@ -96,12 +100,19 @@ async function saveSearchRadius(searchRadius: number) {
   await supabase.from("accounts").update({ search_radius: searchRadius }).eq("id", userId);
 }
 
+async function getCurrentAddress(): Promise<string[]> {
+  const location = await getLocation();
+  const longAddress = await getAddress(location);
+  return addressToShortString(longAddress);
+}
+
 export default {
-  saveUseCurrentLocation,
-  useCurrentLocation,
-  getLocation,
-  saveLocation,
   createFilterByCurrentLocationAndSelectedCategories,
+  getCurrentAddress,
+  getLocation,
   getSearchRadius,
-  saveSearchRadius
+  saveLocation,
+  saveSearchRadius,
+  saveUseCurrentLocation,
+  useCurrentLocation
 };

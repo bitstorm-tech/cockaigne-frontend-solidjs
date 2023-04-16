@@ -73,7 +73,7 @@ async function getProfileImage(id?: string, isDealer = false): Promise<string> {
   const userId = id ? id : await authService.getUserId();
 
   if (!userId) {
-    console.log("Can't get profile image -> unknown user");
+    console.log("Can't get profile image -> unknown user -> return default image");
     return isDealer ? DEFAULT_DEALER_PROFILE_IMAGE_URL : DEFAULT_USER_PROFILE_IMAGE_URL;
   }
 
