@@ -5,7 +5,6 @@ import LoginIcon from "~/components/ui/icons/LoginIcon";
 import LogoutIcon from "~/components/ui/icons/LogoutIcon";
 import NewsIcon from "~/components/ui/icons/NewsIcon";
 import RegistrationIcon from "~/components/ui/icons/RegistrationIcon";
-import { clearAccountStore } from "~/lib/stores/account-store";
 import authService from "~/lib/supabase/auth-service";
 
 export default function Menu({ isLoggendIn = false }) {
@@ -13,7 +12,6 @@ export default function Menu({ isLoggendIn = false }) {
 
   async function logout() {
     await authService.logout();
-    clearAccountStore();
     navigate("/");
   }
 

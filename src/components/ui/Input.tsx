@@ -7,7 +7,7 @@ export default function Input(props: {
   letterSpacing?: boolean;
   type?: string;
   placeholder?: string;
-  value?: string;
+  value?: string | null;
   min?: number;
   disabled?: boolean;
   maxlength?: string;

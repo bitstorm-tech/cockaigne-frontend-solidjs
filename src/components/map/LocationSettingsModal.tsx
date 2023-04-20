@@ -15,16 +15,6 @@ export default function LocationSettingsModal() {
   const [useCurrentLocation, setUseCurrentLocation] = createSignal(false);
 
   const button = <Button onClick={() => setShowLocationSettingsModal(false)}>Übernehmen</Button>;
-  //   [
-  //   {
-  //     text: "Übernehmen",
-  //     callback: () => {
-  //       locationService.saveUseCurrentLocation(useCurrentLocation);
-  //       locationService.saveLocation($locationStore);
-  //       open = false;
-  //     }
-  //   }
-  // ];
 
   async function onShow() {
     setUseCurrentLocation(await locationService.useCurrentLocation());
@@ -64,7 +54,12 @@ export default function LocationSettingsModal() {
   }
 
   return (
-    <Modal show={showLocationSettingsModal()} onShow={onShow} onClose={() => setShowLocationSettingsModal(false)} buttons={button}>
+    <Modal
+      show={showLocationSettingsModal()}
+      onShow={onShow}
+      onClose={() => setShowLocationSettingsModal(false)}
+      buttons={button}
+    >
       <div class="m-2 flex flex-col gap-3">
         <Textarea label="Adresse" value={address()} onEnter={search} disabled={useCurrentLocation()} lines={2} />
         <Button onClick={search} disabled={useCurrentLocation()} loading={loading()}>

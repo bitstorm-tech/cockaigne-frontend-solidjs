@@ -1,4 +1,4 @@
-import { createResource, createSignal, onMount } from "solid-js";
+import { createEffect, createResource, createSignal, onMount } from "solid-js";
 import FireIcon from "~/components/ui/icons/FireIcon";
 import HeartIcon from "~/components/ui/icons/HeartIcon";
 import StarIcon from "~/components/ui/icons/StarIcon";
@@ -6,6 +6,7 @@ import UserDealList from "~/components/user/UserDealList";
 import UserFavoriteDealerList from "~/components/user/UserFavoriteDealerList";
 import UserHeader from "~/components/user/UserHeader";
 import UserHotDealList from "~/components/user/UserHotDealList";
+import { account } from "~/lib/stores/account-store";
 import { setCurrentPage } from "~/lib/stores/navigation-store";
 import dealService from "~/lib/supabase/deal-service";
 import locationService from "~/lib/supabase/location-service";
@@ -21,6 +22,8 @@ export default function User() {
 
   const [deals] = createResource(fetchDeals);
 
+  createEffect(() => console.log("hohohaha", account));
+
   return (
     <>
       <UserHeader />
@@ -35,11 +38,9 @@ export default function User() {
           <HeartIcon outline={tabIndex() !== 2} />
         </button>
       </div>
-      <div class="h-full overflow-auto">
-        {tabIndex() === 0 && <UserDealList deals={deals()!} />}
-        {tabIndex() === 1 && <UserHotDealList />}
-        {tabIndex() === 2 && <UserFavoriteDealerList />}
-      </div>
+      {tabIndex() === 0 && <UserDealList deals={deals()!} />}
+      {tabIndex() === 1 && <UserHotDealList />}
+      {tabIndex() === 2 && <UserFavoriteDealerList />}
     </>
   );
 }

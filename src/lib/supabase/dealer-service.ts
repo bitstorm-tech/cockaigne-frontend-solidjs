@@ -1,5 +1,6 @@
+import authService from "~/lib/supabase/auth-service";
 import type { Dealer, FavoriteDealer } from "./public-types";
-import { getUserId, supabase } from "./supabase-client";
+import { supabase } from "./supabase-client";
 
 async function getDealer(dealerId: string): Promise<Dealer | null> {
   const { data } = await supabase.from("dealer_view").select().eq("id", dealerId).single();
@@ -12,15 +13,11 @@ async function getDealer(dealerId: string): Promise<Dealer | null> {
 }
 
 async function toggleFavoriteDealer(dealerId: string) {
-  const userId = await getUserId();
+  const userId = await authService.getUserId();
 
   if (!userId) return;
 
-  const { data } = await supabase
-    .from("favorite_dealers")
-    .select("user_id")
-    .eq("user_id", userId)
-    .eq("dealer_id", dealerId);
+  const { data } = await supabase.from("favorite_dealers").select("user_id").eq("user_id", userId).eq("dealer_id", dealerId);
 
   if (data?.length === 0) {
     await supabase.from("favorite_dealers").insert([{ user_id: userId, dealer_id: dealerId }]);
@@ -30,7 +27,7 @@ async function toggleFavoriteDealer(dealerId: string) {
 }
 
 async function isFavoriteDealer(dealerId: string): Promise<boolean> {
-  const userId = await getUserId();
+  const userId = await authService.getUserId();
 
   if (!userId) return false;
 
@@ -49,7 +46,7 @@ async function isFavoriteDealer(dealerId: string): Promise<boolean> {
 }
 
 async function getFavoriteDealers(): Promise<FavoriteDealer[]> {
-  const userId = await getUserId();
+  const userId = await authService.getUserId();
 
   if (!userId) return [];
 

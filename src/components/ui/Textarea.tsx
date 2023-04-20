@@ -13,6 +13,7 @@ export default function Textarea(props: {
   props = mergeProps(
     {
       id: props.label?.toLowerCase(),
+      value: "",
       onChange: () => {},
       onEnter: () => {}
     },

@@ -3,6 +3,7 @@ import { For, mergeProps } from "solid-js";
 export default function Select(props: {
   label: string;
   options: Map<string, string>;
+  value?: string;
   disabled?: boolean;
   onSelect?: (value: string) => void;
 }) {
@@ -21,6 +22,7 @@ export default function Select(props: {
       </label>
       <select
         class="text-md select-bordered select focus:border-primary focus:outline-none"
+        value={props.value}
         onChange={(e) => props.onSelect!(e.currentTarget.value)}
         disabled={props.disabled}
       >

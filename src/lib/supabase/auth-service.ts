@@ -1,6 +1,7 @@
 import { jwtVerify } from "jose";
 import { isServer } from "solid-js/web";
 import { useServerContext } from "solid-start";
+import { loadAccount, setAccount } from "~/lib/stores/account-store";
 import sessionStore from "~/lib/stores/session-store";
 import { supabase, translateError } from "~/lib/supabase/supabase-client";
 
@@ -37,10 +38,13 @@ async function login(email: string, password: string): Promise<string | undefine
     console.log("Can't login:", error);
     return translateError(error);
   }
+
+  loadAccount().then();
 }
 
 async function logout() {
   const { error } = await supabase.auth.signOut();
+  setAccount("username", "");
 
   if (error) {
     console.log("Can't logout:", error);

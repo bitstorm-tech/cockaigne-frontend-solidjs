@@ -3,5 +3,5 @@
     "prettier-plugin-tailwindcss"
   ],
   "trailingComma": "none",
-  "printWidth": 140
+  "printWidth": 130
 }
