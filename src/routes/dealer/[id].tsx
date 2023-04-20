@@ -1,5 +1,6 @@
 import { useParams } from "@solidjs/router";
 import { createResource, createSignal, Show } from "solid-js";
+import DealerDealList from "~/components/dealer/DealerDealList";
 import DealerHeader from "~/components/dealer/DealerHeader";
 import DealerImages from "~/components/dealer/DealerImages";
 import RatingList from "~/components/dealer/rating/RatingList";
@@ -10,11 +11,16 @@ import ImageIcon from "~/components/ui/icons/ImageIcon";
 import RatingIcon from "~/components/ui/icons/RatingIcon";
 import sessionStore from "~/lib/stores/session-store";
 import accountService from "~/lib/supabase/account-service";
+import dealService from "~/lib/supabase/deal-service";
+import { ActiveDeal } from "~/lib/supabase/public-types";
 
 export default function Dealer() {
   const params = useParams();
   const [tabIndex, setTabIndex] = createSignal(0);
-  const [companyName] = createResource(() => accountService.getUsername(params.id), { initialValue: "" });
+  const [companyName] = createResource(async () => await accountService.getUsername(params.id), { initialValue: "" });
+  const [deals] = createResource(async () => (await dealService.getDealsByDealerId(params.id)) as ActiveDeal[], {
+    initialValue: []
+  });
 
   function toggleFavorite() {}
 
@@ -47,7 +53,7 @@ export default function Dealer() {
           <RatingIcon outline={tabIndex() !== 2} />
         </button>
       </div>
-      {tabIndex() === 0 && <h1>Tab 1</h1>}
+      {tabIndex() === 0 && <DealerDealList deals={deals()} />}
       {tabIndex() === 1 && <DealerImages companyName={companyName()} />}
       {tabIndex() === 2 && <RatingList id={params.id} />}
     </>

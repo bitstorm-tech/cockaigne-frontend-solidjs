@@ -1,9 +1,6 @@
 import { createSignal, mergeProps, Show } from "solid-js";
 import Button from "~/components/ui/Button";
 
-const [selectedImage, setSelectedImage] = createSignal<File>();
-const [imagePreview, setImagePreview] = createSignal("");
-
 export default function ImagePicker(props: {
   buttonText?: string;
   onImageSelected: (image: File) => void;
@@ -14,6 +11,7 @@ export default function ImagePicker(props: {
   let fileInput!: HTMLInputElement;
   let file: File | undefined;
 
+  // @ts-ignore
   function pictureSelected(event) {
     file = event.target.files[0] as File;
 

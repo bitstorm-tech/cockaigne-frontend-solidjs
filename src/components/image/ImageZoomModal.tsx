@@ -17,7 +17,6 @@ export default function ImageZoomModal(props: { title: string; imageUrls: string
 
   return (
     <Modal show={showImageZoomModal()} onClose={() => setShowImageZoomModal(false)} onShow={() => setIndex(props.index)}>
-      <div>Index: {index()}</div>
       <div class="flex max-h-[75vh] flex-col gap-3">
         <div class="overflow-auto">
           <img loading="lazy" src={props.imageUrls[index()]} alt="Dealer shop impression or deal images" />

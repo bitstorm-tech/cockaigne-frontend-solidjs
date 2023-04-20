@@ -49,7 +49,11 @@ export default function DealerImages(props: { companyName: string }) {
   return (
     <Suspense>
       <Show when={images().length === 0}>
-        <EmptyContent>Füge ein paar Bilder hinzu und mach deine Seite noch schöner!</EmptyContent>
+        <EmptyContent>
+          {sessionStore.isDealer
+            ? "Füge ein paar Bilder hinzu und mach deine Seite noch schöner!"
+            : "Noch keine Bilder verfügbar ..."}
+        </EmptyContent>
       </Show>
       <div class="grid grid-cols-3 gap-2">
         <For each={images()}>

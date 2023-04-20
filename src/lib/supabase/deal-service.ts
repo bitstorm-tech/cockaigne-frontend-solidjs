@@ -213,7 +213,7 @@ async function enrichDealWithImageUrls<T extends ActiveDeal[] | Deal[]>(deals: T
 
 function rotateByCurrentTime(deals: ActiveDeal[]): ActiveDeal[] {
   const nowTime = dateTimeUtils.getTimeString();
-  const dealsAfterNow = remove(deals, (deal) => nowTime > dateTimeUtils.getTimeString(deal.start));
+  const dealsAfterNow = remove(deals, (deal) => nowTime > dateTimeUtils.getTimeString(deal.start!));
 
   return [...deals, ...dealsAfterNow];
 }
