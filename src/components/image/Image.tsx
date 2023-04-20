@@ -9,12 +9,18 @@ export default function Image(props: {
   onZoom?: () => void;
   onDelete?: () => void;
 }) {
-  props = mergeProps({ showDelete: false, fixedHeight: true, smallHeight: false }, props);
+  props = mergeProps({ fixedHeight: true, smallHeight: false, showDelete: false }, props);
+
+  function onDelete(event: MouseEvent) {
+    event.preventDefault();
+    event.stopPropagation();
+    props.onDelete!();
+  }
 
   return (
     <div class="relative" onClick={props.onZoom}>
       <Show when={props.showDelete}>
-        <button class="absolute cursor-pointer p-1 text-red-600" onClick={props.onDelete}>
+        <button class="absolute cursor-pointer p-1 text-red-600" onClick={onDelete}>
           <TrashIcon />
         </button>
       </Show>

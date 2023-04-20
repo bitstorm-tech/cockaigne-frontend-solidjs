@@ -84,7 +84,12 @@ async function register(registrationData: RegistrationData): Promise<string | un
   let position: Position = munichPosition;
 
   if (registrationData.isDealer) {
-    const _position = await getLocation(registrationData.street, registrationData.houseNumber, registrationData.city, registrationData.zip);
+    const _position = await getLocation(
+      registrationData.street,
+      registrationData.houseNumber,
+      registrationData.city,
+      registrationData.zip
+    );
 
     if (!_position) {
       return "Adresse ist ungültig";
@@ -122,8 +127,8 @@ async function register(registrationData: RegistrationData): Promise<string | un
   }
 }
 
-async function getUsername(): Promise<string> {
-  const userId = await authService.getUserId();
+async function getUsername(userId?: string): Promise<string> {
+  userId = userId ? userId : await authService.getUserId();
 
   if (!userId) {
     return "Anonymous";
