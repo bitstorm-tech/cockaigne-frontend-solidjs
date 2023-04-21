@@ -2,9 +2,9 @@ import DealContainer from "~/components/deal/DealContainer";
 import DealerDealDetails from "~/components/dealer/DealerDealDetails";
 import UserDealDetails from "~/components/user/UserDealDetails";
 import sessionStore from "~/lib/stores/session-store";
-import { ActiveDeal } from "~/lib/supabase/public-types";
+import { FutureActivePastDeal } from "~/lib/supabase/public-types";
 
-export default function DealerDeal(props: { deal: ActiveDeal; onClick: () => void; showDetails: boolean }) {
+export default function DealerDeal(props: { deal: FutureActivePastDeal; onClick: () => void; showDetails: boolean }) {
   const rightAction = <></>;
 
   return (

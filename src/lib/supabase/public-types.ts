@@ -6,6 +6,8 @@ export type ActiveDeal = Database["public"]["Views"]["active_deals_view"]["Row"]
   isHot?: boolean;
   imageUrls?: string[];
 };
+export type FutureDeal = Database["public"]["Views"]["future_deals_view"]["Row"] & { imageUrls?: string[] };
+export type PastDeal = Database["public"]["Views"]["past_deals_view"]["Row"] & { imageUrls?: string[] };
 export type Category = Database["public"]["Tables"]["categories"]["Row"];
 export type Deal = Database["public"]["Tables"]["deals"]["Row"] & { imageUrls?: string[] };
 export type Dealer = Database["public"]["Views"]["dealer_view"]["Row"];
@@ -17,3 +19,5 @@ export type ReportedDeal = Database["public"]["Tables"]["reported_deals"]["Row"]
 export type SelectedCategory = Database["public"]["Tables"]["selected_categories"]["Row"];
 export type GetActiveDealsWithinExtentFunctionArguments =
   Database["public"]["Functions"]["get_active_deals_within_extent"]["Args"];
+
+export type FutureActivePastDeal = FutureDeal | ActiveDeal | PastDeal;

@@ -3,7 +3,7 @@ import LikeIcon from "~/components/ui/icons/LikeIcon";
 import { ActiveDeal } from "~/lib/supabase/public-types";
 import { formatDate } from "~/lib/utils/date-time.utils";
 
-export default function DealerDealDetails(props: { deal: ActiveDeal }) {
+export default function DealerDealDetails(props: { deal: ActiveDeal | Deal }) {
   return (
     <DealDetailsContainer deal={props.deal}>
       <div class="flex justify-between text-xs">

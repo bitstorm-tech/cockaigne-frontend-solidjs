@@ -1,4 +1,4 @@
-import { createEffect, createResource, createSignal, onMount } from "solid-js";
+import { createResource, createSignal, onMount } from "solid-js";
 import FireIcon from "~/components/ui/icons/FireIcon";
 import HeartIcon from "~/components/ui/icons/HeartIcon";
 import StarIcon from "~/components/ui/icons/StarIcon";
@@ -6,7 +6,6 @@ import UserDealList from "~/components/user/UserDealList";
 import UserFavoriteDealerList from "~/components/user/UserFavoriteDealerList";
 import UserHeader from "~/components/user/UserHeader";
 import UserHotDealList from "~/components/user/UserHotDealList";
-import { account } from "~/lib/stores/account-store";
 import { setCurrentPage } from "~/lib/stores/navigation-store";
 import dealService from "~/lib/supabase/deal-service";
 import locationService from "~/lib/supabase/location-service";
@@ -21,8 +20,6 @@ export default function User() {
   const [tabIndex, setTabIndex] = createSignal(0);
 
   const [deals] = createResource(fetchDeals);
-
-  createEffect(() => console.log("hohohaha", account));
 
   return (
     <>

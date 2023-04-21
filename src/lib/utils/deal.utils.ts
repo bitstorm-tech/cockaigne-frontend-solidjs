@@ -1,4 +1,4 @@
-import type { Deal } from "$lib/supabase/public-types";
+import { Deal } from "~/lib/supabase/public-types";
 
 export type DealState = "past" | "future" | "active";
 

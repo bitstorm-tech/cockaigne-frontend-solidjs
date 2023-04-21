@@ -1,7 +1,7 @@
 import { JSXElement, mergeProps, Show } from "solid-js";
 import { A } from "solid-start";
 import CategoryIcon from "~/components/ui/CategoryIcon";
-import { ActiveDeal } from "~/lib/supabase/public-types";
+import type { FutureActivePastDeal } from "~/lib/supabase/public-types";
 
 function ignoreClick(event: MouseEvent) {
   event.stopPropagation();
@@ -9,7 +9,7 @@ function ignoreClick(event: MouseEvent) {
 }
 
 export default function DealContainer(props: {
-  deal: ActiveDeal;
+  deal: FutureActivePastDeal;
   showDetails?: boolean;
   showCompanyName?: boolean;
   onClick?: () => void;

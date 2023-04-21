@@ -36,10 +36,10 @@ export default function Settings() {
     <section class="flex flex-col gap-4 p-4">
       <Suspense>
         <Show when={account.dealer}>
-          <DealerSettings onProfileImageSelected={(image) => setNewProfileImage(image)} />
+          <DealerSettings onProfileImageSelected={setNewProfileImage} />
         </Show>
         <Show when={!account.dealer}>
-          <UserSettings onProfileImageSelected={(image) => setNewProfileImage(image)} />
+          <UserSettings onProfileImageSelected={setNewProfileImage} />
         </Show>
       </Suspense>
       <div class="grid grid-cols-2 gap-4">

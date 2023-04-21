@@ -1,9 +1,9 @@
 import { createSignal, For, Suspense } from "solid-js";
 import DealListContainer from "~/components/deal/DealListContainer";
 import DealerDeal from "~/components/dealer/DealerDeal";
-import { ActiveDeal } from "~/lib/supabase/public-types";
+import { FutureActivePastDeal } from "~/lib/supabase/public-types";
 
-export default function DealerDealList(props: { deals: ActiveDeal[] }) {
+export default function DealerDealList(props: { deals: FutureActivePastDeal[] }) {
   const [openDealIndex, setOpenDealIndex] = createSignal(-1);
 
   return (

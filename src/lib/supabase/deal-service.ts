@@ -6,7 +6,7 @@ import authService from "~/lib/supabase/auth-service";
 import storageService from "~/lib/supabase/storage-service";
 import dateTimeUtils, { getDateTimeAsIsoString } from "~/lib/utils/date-time.utils";
 import locationService from "./location-service";
-import type { ActiveDeal, Deal, GetActiveDealsWithinExtentFunctionArguments } from "./public-types";
+import type { ActiveDeal, Deal, FutureDeal, GetActiveDealsWithinExtentFunctionArguments, PastDeal } from "./public-types";
 import { supabase } from "./supabase-client";
 
 export interface DealFilter {
@@ -41,6 +41,28 @@ async function getActiveDealsByDealer(dealerIds: string | string[]): Promise<Act
 
   if (error) {
     console.error("Can't get active deals:", error);
+    return [];
+  }
+
+  return enrichDealWithImageUrls(data);
+}
+
+async function getPastDealsByDealer(dealerId: string): Promise<PastDeal[]> {
+  const { data, error } = await supabase.from("past_deals_view").select().eq("dealer_id", dealerId);
+
+  if (error) {
+    console.error("Can't get past deals:", error);
+    return [];
+  }
+
+  return enrichDealWithImageUrls(data);
+}
+
+async function getFutureDealsByDealer(dealerId: string): Promise<FutureDeal[]> {
+  const { data, error } = await supabase.from("future_deals_view").select().eq("dealer_id", dealerId);
+
+  if (error) {
+    console.error("Can't get future deals:", error);
     return [];
   }
 
@@ -123,20 +145,6 @@ export async function getDealsByFilter(filter: DealFilter): Promise<ActiveDeal[]
 
   if (error) {
     console.error("Can't get deals by filter:", error);
-    return [];
-  }
-
-  return enrichDealWithImageUrls(data);
-}
-
-async function getDealsByDealerId(dealerId: string, activeOnly = true): Promise<ActiveDeal[] | Deal[]> {
-  const query = activeOnly
-    ? supabase.from("active_deals_view").select().eq("dealer_id", dealerId)
-    : supabase.from("deals").select().eq("dealer_id", dealerId).eq("template", false);
-  const { data, error } = await query;
-
-  if (error) {
-    console.error("Can't get deals by dealer id:", error);
     return [];
   }
 
@@ -266,8 +274,9 @@ export function newDeal(): Deal {
 export default {
   deleteDeal,
   getActiveDealsByDealer,
+  getFutureDealsByDealer,
+  getPastDealsByDealer,
   getDeal,
-  getDealsByDealerId,
   getDealsByFilter,
   getHotDeals,
   getTopDeals,

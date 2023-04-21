@@ -26,7 +26,7 @@ export default function Header() {
             <A href="/">
               <img loading="lazy" class="h-7" src="/images/logo.svg" alt="Bildmarke" />
             </A>
-            <MemberStatus />
+            {sessionStore.isDealer || <MemberStatus />}
           </div>
           <div class="z-20 flex cursor-pointer text-[#69828c]">
             {showMenu() ? (

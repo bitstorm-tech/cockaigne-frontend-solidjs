@@ -1,5 +1,5 @@
 import { useParams } from "@solidjs/router";
-import { createResource, createSignal, Show } from "solid-js";
+import { createResource, createSignal, onMount, Show } from "solid-js";
 import DealerDealList from "~/components/dealer/DealerDealList";
 import DealerHeader from "~/components/dealer/DealerHeader";
 import DealerImages from "~/components/dealer/DealerImages";
@@ -9,6 +9,7 @@ import DealIcon from "~/components/ui/icons/DealIcon";
 import HeartIcon from "~/components/ui/icons/HeartIcon";
 import ImageIcon from "~/components/ui/icons/ImageIcon";
 import RatingIcon from "~/components/ui/icons/RatingIcon";
+import { setCurrentPage } from "~/lib/stores/navigation-store";
 import sessionStore from "~/lib/stores/session-store";
 import accountService from "~/lib/supabase/account-service";
 import dealService from "~/lib/supabase/deal-service";
@@ -18,9 +19,11 @@ export default function Dealer() {
   const params = useParams();
   const [tabIndex, setTabIndex] = createSignal(0);
   const [companyName] = createResource(async () => await accountService.getUsername(params.id), { initialValue: "" });
-  const [deals] = createResource(async () => (await dealService.getDealsByDealerId(params.id)) as ActiveDeal[], {
+  const [deals] = createResource(async () => (await dealService.getActiveDealsByDealer(params.id)) as ActiveDeal[], {
     initialValue: []
   });
+
+  onMount(() => setCurrentPage("home"));
 
   function toggleFavorite() {}
 
