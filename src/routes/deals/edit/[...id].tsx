@@ -13,7 +13,7 @@ import authService from "~/lib/supabase/auth-service";
 import dealService from "~/lib/supabase/deal-service";
 import { DealUpsert } from "~/lib/supabase/public-types";
 import storageService from "~/lib/supabase/storage-service";
-import dateTimeUtils, { getDateAsIsoString } from "~/lib/utils/date-time.utils";
+import dateTimeUtils, { getDateAsIsoString, getDateTimeAsIsoString } from "~/lib/utils/date-time.utils";
 
 const runtimes = {
   "24": "1 Tag",
@@ -50,6 +50,13 @@ export default function EditDeal() {
     }
   });
 
+  function handleStartImmediately(value: boolean) {
+    setStartDealImmediately(value);
+    if (value) {
+      setDeal("start", getDateTimeAsIsoString(new Date()));
+    }
+  }
+
   function imageSelected(image: File, imagePreviewUrl: string) {
     images.push(image);
     setImagePreviewsUrls((old) => [...old, imagePreviewUrl]);
@@ -69,9 +76,7 @@ export default function EditDeal() {
     }
 
     setDeal("duration", getDurationInDays() * 24);
-
-    const startDate = startDealImmediately() ? new Date() : new Date(deal.start);
-    setDeal("start", dateTimeUtils.formatDateWithTimeZone(startDate));
+    setDeal("start", dateTimeUtils.formatDateWithTimeZone(deal.start));
 
     const dealerId = await authService.getUserId();
     if (dealerId) {
@@ -92,7 +97,7 @@ export default function EditDeal() {
   function getDurationInDays(): number {
     if (individuallyTime()) {
       const startDate = deal.start.split("T")[0];
-      const startTimestamp = startDealImmediately() ? new Date().getMilliseconds() : Date.parse(startDate);
+      const startTimestamp = Date.parse(startDate);
       const endTimestamp = Date.parse(individualEndDate());
       return (endTimestamp - startTimestamp) / (60 * 60 * 1000) / 24;
     }
@@ -137,7 +142,7 @@ export default function EditDeal() {
         <Checkbox
           label="Sofort starten"
           checked={startDealImmediately()}
-          onChange={setStartDealImmediately}
+          onChange={handleStartImmediately}
           disabled={disabled()}
         />
       </div>

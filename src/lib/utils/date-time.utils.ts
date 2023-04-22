@@ -7,7 +7,7 @@ const DATE_FORMAT = "yyyy-MM-dd";
 const DATE_TIME_FORMAT_WITHOUT_TIMEZONE = DATE_FORMAT + "'T'HH:mm";
 const DATE_TIME_FORMAT_WITH_TIMEZONE = DATE_TIME_FORMAT_WITHOUT_TIMEZONE + "XXX";
 
-export function formatDateWithTimeZone(date: Date): string {
+export function formatDateWithTimeZone(date: Date | string): string {
   return formatInTimeZone(date, "Europe/Berlin", DATE_TIME_FORMAT_WITH_TIMEZONE);
 }
 

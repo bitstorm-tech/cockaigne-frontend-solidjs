@@ -6,7 +6,7 @@ import { ActiveDeal } from "~/lib/supabase/public-types";
 export default function UserDeal(props: { deal: ActiveDeal; showDetails: boolean; onClick: () => void }) {
   const rightAction = (
     <button class="cursor-pointer">
-      <FireIcon />
+      <FireIcon outline />
     </button>
   );
 

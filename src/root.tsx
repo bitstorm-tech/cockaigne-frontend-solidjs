@@ -11,9 +11,9 @@ export default function Root() {
   const navigate = useNavigate();
   if (!sessionStore.userId) {
     navigate("/");
-  } else {
-    loadAccount().then();
   }
+
+  loadAccount().then();
 
   return (
     <Html lang="en" data-theme="dark">
