@@ -1,14 +1,12 @@
-import { createResource, createSignal, Show } from "solid-js";
+import { createSignal, Show } from "solid-js";
 import AddressSettings from "~/components/settings/AddressSettings";
 import CategorySelect from "~/components/ui/CategorySelect";
 import ImagePicker from "~/components/ui/ImagePicker";
 import Input from "~/components/ui/Input";
 import { account } from "~/lib/stores/account-store";
-import categoryService from "~/lib/supabase/category-service";
 
 export default function DealerSettings(props: { onProfileImageSelected: (image: File) => void }) {
   const [tabIndex, setTabIndex] = createSignal(0);
-  const [categories] = createResource(categoryService.getCategories);
 
   return (
     <>
@@ -33,7 +31,6 @@ export default function DealerSettings(props: { onProfileImageSelected: (image: 
             label="Branche"
             value={account.default_category || 1}
             onSelect={(value) => (account.default_category = value)}
-            categories={new Map(categories()?.map((category) => [category.id.toString(), category.name]))}
           />
         </div>
       </Show>

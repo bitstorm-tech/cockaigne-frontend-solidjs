@@ -1,5 +1,5 @@
-import { useParams } from "@solidjs/router";
-import { createResource, createSignal, onMount, Show } from "solid-js";
+import { useNavigate, useParams } from "@solidjs/router";
+import { createResource, createSignal, onMount } from "solid-js";
 import DealerDealList from "~/components/dealer/DealerDealList";
 import DealerHeader from "~/components/dealer/DealerHeader";
 import DealerImages from "~/components/dealer/DealerImages";
@@ -16,6 +16,7 @@ import dealService from "~/lib/supabase/deal-service";
 import { ActiveDeal } from "~/lib/supabase/public-types";
 
 export default function Dealer() {
+  const navigate = useNavigate();
   const params = useParams();
   const [tabIndex, setTabIndex] = createSignal(0);
   const [companyName] = createResource(async () => await accountService.getUsername(params.id), { initialValue: "" });
@@ -30,20 +31,19 @@ export default function Dealer() {
   return (
     <>
       <DealerHeader id={params.id}>
-        <Show when={sessionStore.isDealer}>
-          <a href={"/deals/new?dealerId=" + params.id} class="mt-4">
-            <Button warning>
+        <div class="mt-4">
+          {sessionStore.isDealer ? (
+            <Button warning onClick={() => navigate("/deals/edit")}>
               Neuer
               <br />
               Deal
             </Button>
-          </a>
-        </Show>
-        <Show when={!sessionStore.isDealer}>
-          <Button onClick={toggleFavorite} circle warning>
-            <HeartIcon outline={true} />
-          </Button>
-        </Show>
+          ) : (
+            <Button onClick={toggleFavorite} circle warning>
+              <HeartIcon outline={true} />
+            </Button>
+          )}
+        </div>
       </DealerHeader>
       <div class="mb-1 mt-4 grid grid-cols-3">
         <button class="tab-bordered tab" classList={{ "tab-active": tabIndex() === 0 }} onClick={() => setTabIndex(0)}>

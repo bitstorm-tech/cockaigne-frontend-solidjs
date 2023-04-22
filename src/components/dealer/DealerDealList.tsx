@@ -3,7 +3,7 @@ import DealListContainer from "~/components/deal/DealListContainer";
 import DealerDeal from "~/components/dealer/DealerDeal";
 import { FutureActivePastDeal } from "~/lib/supabase/public-types";
 
-export default function DealerDealList(props: { deals: FutureActivePastDeal[] }) {
+export default function DealerDealList(props: { deals: FutureActivePastDeal[]; showRightActions?: boolean }) {
   const [openDealIndex, setOpenDealIndex] = createSignal(-1);
 
   return (
@@ -15,6 +15,7 @@ export default function DealerDealList(props: { deals: FutureActivePastDeal[] })
               deal={deal}
               showDetails={openDealIndex() === index()}
               onClick={() => setOpenDealIndex(openDealIndex() === index() ? -1 : index())}
+              showRightAction={props.showRightActions}
             />
           )}
         </For>

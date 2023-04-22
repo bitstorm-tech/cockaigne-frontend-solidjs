@@ -1,12 +1,13 @@
-import { createSignal, mergeProps, Show } from "solid-js";
+import { createSignal, Show } from "solid-js";
 import Button from "~/components/ui/Button";
 
 export default function ImagePicker(props: {
   buttonText?: string;
-  onImageSelected: (image: File) => void;
+  onImageSelected: (image: File, previewImageUrl: string) => void;
   imagePreview?: string;
+  hidePreview?: boolean;
+  disabled?: boolean;
 }) {
-  props = mergeProps({ buttonText: "Bild auswählen" }, props);
   const [imagePreview, setImagePreview] = createSignal(props.imagePreview);
   let fileInput!: HTMLInputElement;
   let file: File | undefined;
@@ -21,14 +22,16 @@ export default function ImagePicker(props: {
 
     const URL = window.URL || window.webkitURL;
     setImagePreview(URL.createObjectURL(file));
-    props.onImageSelected(file);
+    props.onImageSelected(file, imagePreview()!);
   }
 
   return (
     <>
-      <Button onClick={() => fileInput.click()}>{props.buttonText}</Button>
+      <Button onClick={() => fileInput.click()} disabled={props.disabled}>
+        {props.buttonText || "Bild auswählen"}
+      </Button>
       <input ref={fileInput} onChange={pictureSelected} type="file" hidden />
-      <Show when={imagePreview()}>
+      <Show when={imagePreview() && !props.hidePreview}>
         <img loading="lazy" src={imagePreview()} alt="Gewähltes Bild" class="w-screen self-center md:w-2/3" />
       </Show>
     </>

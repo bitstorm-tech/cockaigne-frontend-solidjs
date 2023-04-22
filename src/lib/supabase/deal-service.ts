@@ -1,4 +1,3 @@
-import omit from "lodash/omit";
 import remove from "lodash/remove";
 import { Extent } from "ol/extent";
 import { Position } from "~/lib/geo/geo.types";
@@ -6,7 +5,14 @@ import authService from "~/lib/supabase/auth-service";
 import storageService from "~/lib/supabase/storage-service";
 import dateTimeUtils, { getDateTimeAsIsoString } from "~/lib/utils/date-time.utils";
 import locationService from "./location-service";
-import type { ActiveDeal, Deal, FutureDeal, GetActiveDealsWithinExtentFunctionArguments, PastDeal } from "./public-types";
+import type {
+  ActiveDeal,
+  Deal,
+  DealUpsert,
+  FutureDeal,
+  GetActiveDealsWithinExtentFunctionArguments,
+  PastDeal
+} from "./public-types";
 import { supabase } from "./supabase-client";
 
 export interface DealFilter {
@@ -35,8 +41,8 @@ async function getDeal(id: string): Promise<Deal | undefined> {
   return deal;
 }
 
-async function getActiveDealsByDealer(dealerIds: string | string[]): Promise<ActiveDeal[]> {
-  const ids = Array.isArray(dealerIds) ? dealerIds : [dealerIds];
+async function getActiveDealsByDealer(dealerIds?: string | string[]): Promise<ActiveDeal[]> {
+  const ids = dealerIds ? (Array.isArray(dealerIds) ? dealerIds : [dealerIds]) : [await authService.getUserId()];
   const { data, error } = await supabase.from("active_deals_view").select().in("dealer_id", ids);
 
   if (error) {
@@ -47,7 +53,11 @@ async function getActiveDealsByDealer(dealerIds: string | string[]): Promise<Act
   return enrichDealWithImageUrls(data);
 }
 
-async function getPastDealsByDealer(dealerId: string): Promise<PastDeal[]> {
+async function getPastDealsByDealer(): Promise<PastDeal[]> {
+  const dealerId = await authService.getUserId();
+
+  if (!dealerId) return [];
+
   const { data, error } = await supabase.from("past_deals_view").select().eq("dealer_id", dealerId);
 
   if (error) {
@@ -58,7 +68,11 @@ async function getPastDealsByDealer(dealerId: string): Promise<PastDeal[]> {
   return enrichDealWithImageUrls(data);
 }
 
-async function getFutureDealsByDealer(dealerId: string): Promise<FutureDeal[]> {
+async function getFutureDealsByDealer(): Promise<FutureDeal[]> {
+  const dealerId = await authService.getUserId();
+
+  if (!dealerId) return [];
+
   const { data, error } = await supabase.from("future_deals_view").select().eq("dealer_id", dealerId);
 
   if (error) {
@@ -69,9 +83,25 @@ async function getFutureDealsByDealer(dealerId: string): Promise<FutureDeal[]> {
   return enrichDealWithImageUrls(data);
 }
 
-async function upsertDeal(deal: Deal, alsoCreateTemplate = false): Promise<string | undefined> {
-  dateTimeUtils.addTimezoneOffsetToDeal(deal);
-  const _deal = deal.id === "" ? omit(deal, "id") : deal;
+async function getTemplatesByDealer(): Promise<Deal[]> {
+  const dealerId = await authService.getUserId();
+
+  const { data, error } = await supabase.from("deals").select().eq("dealer_id", dealerId).eq("template", true);
+
+  if (error) {
+    console.log("Can't get templates:", error);
+    return [];
+  }
+
+  return enrichDealWithImageUrls(data);
+}
+
+async function upsertDeal(deal: DealUpsert, alsoCreateTemplate = false): Promise<string | undefined> {
+  const dealerId = await authService.getUserId();
+
+  if (!dealerId) return;
+
+  const _deal = deal;
   delete _deal.imageUrls;
 
   const resultUpsertDeal = await supabase.from("deals").upsert(_deal).select("id").single();
@@ -257,17 +287,15 @@ async function toggleLike(deal: ActiveDeal): Promise<number> {
   return count === 0 ? deal.likes + 1 : deal.likes - 1;
 }
 
-export function newDeal(): Deal {
+export function newDeal(): DealUpsert {
   return {
-    id: "",
     dealer_id: "",
     start: getDateTimeAsIsoString(new Date(), 60),
     title: "",
     description: "",
     duration: 24,
     template: false,
-    category_id: 1,
-    created: ""
+    category_id: 1
   };
 }
 
@@ -276,6 +304,7 @@ export default {
   getActiveDealsByDealer,
   getFutureDealsByDealer,
   getPastDealsByDealer,
+  getTemplatesByDealer,
   getDeal,
   getDealsByFilter,
   getHotDeals,

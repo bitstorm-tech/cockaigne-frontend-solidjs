@@ -14,7 +14,7 @@ export default function Footer() {
           <A href="/" activeClass="">
             <HomeIcon outline={currentPage() !== "home"} />
           </A>
-          <A href={`/deals/overview/${sessionStore.userId}`} activeClass="">
+          <A href="/deals/overview" activeClass="">
             <DealsOverviewIcon outline={currentPage() !== "dealOverview"} />
           </A>
         </>

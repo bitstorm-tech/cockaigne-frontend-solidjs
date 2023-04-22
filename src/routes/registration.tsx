@@ -1,4 +1,4 @@
-import { createEffect, createSignal, onMount, Show } from "solid-js";
+import { createEffect, createSignal, Show } from "solid-js";
 import { useNavigate } from "solid-start";
 import Alert from "~/components/ui/Alert";
 import Button from "~/components/ui/Button";
@@ -6,11 +6,9 @@ import CategorySelect from "~/components/ui/CategorySelect";
 import Checkbox from "~/components/ui/Checkbox";
 import Input from "~/components/ui/Input";
 import accountService from "~/lib/supabase/account-service";
-import categoryService from "~/lib/supabase/category-service";
 
 export default function Registration() {
   const navigate = useNavigate();
-  const [categoryOptions, setCategoryOptions] = createSignal<Map<string, string>>(new Map());
   const [loading, setLoading] = createSignal(false);
   const [disabled, setDisabled] = createSignal(true);
   const [isDealer, setIsDealer] = createSignal(false);
@@ -28,12 +26,6 @@ export default function Registration() {
   const [age, setAge] = createSignal("111");
   const [gender, setGender] = createSignal("111");
   const [defaultCategory, setDefaultCategory] = createSignal(0);
-
-  onMount(async () => {
-    const categories = await categoryService.getCategories();
-    const options = new Map(categories.map((category) => [category.id.toString(), category.name]));
-    setCategoryOptions(options);
-  });
 
   createEffect(() => {
     const disabled =
@@ -89,7 +81,7 @@ export default function Registration() {
       <Input label="Passwort" type="password" onChange={setPassword} />
       <Show when={isDealer()}>
         <Input label="Firmenname" type="text" onChange={setUsername} />
-        <CategorySelect label="Branche" categories={categoryOptions()} onSelect={setDefaultCategory} />
+        <CategorySelect label="Branche" onSelect={setDefaultCategory} />
         <div class="grid grid-cols-3 gap-3">
           <div class="col-span-2">
             <Input label="Straße" type="text" onChange={setStreet} />

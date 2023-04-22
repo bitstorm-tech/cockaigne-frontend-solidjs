@@ -8,7 +8,7 @@ export default function Input(props: {
   type?: string;
   placeholder?: string;
   value?: string | null;
-  min?: number;
+  min?: string;
   disabled?: boolean;
   maxlength?: string;
   onEnter?: () => void;
@@ -22,7 +22,6 @@ export default function Input(props: {
       type: "text",
       placeholder: "",
       value: "",
-      min: -1,
       disabled: false,
       maxlength: "",
       onEnter: () => {},

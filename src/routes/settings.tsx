@@ -1,9 +1,10 @@
-import { createSignal, Show, Suspense } from "solid-js";
+import { createSignal, Suspense } from "solid-js";
 import { useNavigate } from "solid-start";
 import DealerSettings from "~/components/settings/DealerSettings";
 import UserSettings from "~/components/settings/UserSettings";
 import Button from "~/components/ui/Button";
-import { account, setAccount } from "~/lib/stores/account-store";
+import { setAccount } from "~/lib/stores/account-store";
+import sessionStore from "~/lib/stores/session-store";
 import storageService from "~/lib/supabase/storage-service";
 
 export default function Settings() {
@@ -35,12 +36,11 @@ export default function Settings() {
   return (
     <section class="flex flex-col gap-4 p-4">
       <Suspense>
-        <Show when={account.dealer}>
+        {sessionStore.isDealer ? (
           <DealerSettings onProfileImageSelected={setNewProfileImage} />
-        </Show>
-        <Show when={!account.dealer}>
+        ) : (
           <UserSettings onProfileImageSelected={setNewProfileImage} />
-        </Show>
+        )}
       </Suspense>
       <div class="grid grid-cols-2 gap-4">
         <Button onClick={save} loading={saving()}>

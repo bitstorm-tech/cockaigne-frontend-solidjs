@@ -1,10 +1,15 @@
 import { addMinutes, format, parseISO } from "date-fns";
 import formatInTimeZone from "date-fns-tz/formatInTimeZone";
 import utcToZonedTime from "date-fns-tz/utcToZonedTime";
-import type { Deal } from "./supabase/public-types";
+import { Deal, DealUpsert } from "~/lib/supabase/public-types";
 
 const DATE_FORMAT = "yyyy-MM-dd";
 const DATE_TIME_FORMAT_WITHOUT_TIMEZONE = DATE_FORMAT + "'T'HH:mm";
+const DATE_TIME_FORMAT_WITH_TIMEZONE = DATE_TIME_FORMAT_WITHOUT_TIMEZONE + "XXX";
+
+export function formatDateWithTimeZone(date: Date): string {
+  return formatInTimeZone(date, "Europe/Berlin", DATE_TIME_FORMAT_WITH_TIMEZONE);
+}
 
 export function getDateTimeAsIsoString(date = new Date(), offsetInMinutes = 0, timezone = "Europe/Berlin"): string {
   const dateWithOffset = addMinutes(date, offsetInMinutes);
@@ -16,7 +21,7 @@ export function getDateAsIsoString(date = new Date(), offsetInMinutes = 0, timez
   return formatInTimeZone(dateWithOffset, timezone, DATE_FORMAT);
 }
 
-export function convertToTimeZonedDateTimeString(date: string | Date | number, timezone = "Europe/Berlin"): string {
+export function convertToTimeZonedDateTimeString(date: string | Date, timezone = "Europe/Berlin"): string {
   const timeZonedDate = utcToZonedTime(date, timezone);
   return getDateTimeAsIsoString(timeZonedDate);
 }
@@ -45,7 +50,7 @@ function removeTimezoneOffset(datetime: string): string {
   return format(date, DATE_TIME_FORMAT_WITHOUT_TIMEZONE);
 }
 
-function addTimezoneOffsetToDeal(deal: Deal) {
+function addTimezoneOffsetToDeal(deal: Deal | DealUpsert) {
   deal.start = addTimezoneOffset(deal.start);
 }
 
@@ -60,5 +65,6 @@ function getTimeString(datetime: string | Date = new Date(), timezone = "Europe/
 export default {
   addTimezoneOffsetToDeal,
   getTimeString,
-  removeTimezoneOffsetFromDeal
+  removeTimezoneOffsetFromDeal,
+  formatDateWithTimeZone
 };
