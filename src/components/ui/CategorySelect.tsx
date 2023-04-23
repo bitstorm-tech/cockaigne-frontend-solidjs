@@ -1,5 +1,6 @@
 import { createResource } from "solid-js";
 import Select from "~/components/ui/Select";
+import { account } from "~/lib/stores/account-store";
 import categoryService from "~/lib/supabase/category-service";
 
 export default function CategorySelect(props: {
@@ -14,7 +15,7 @@ export default function CategorySelect(props: {
     <Select
       label={props.label ?? "Kategorie"}
       options={new Map(categories()?.map((category) => [category.id.toString(), category.name]))}
-      value={props.value?.toString() || ""}
+      selected={props.value?.toString() || account.default_category?.toString()}
       onSelect={(value) => props.onSelect(+value)}
       disabled={props.disabled}
     />

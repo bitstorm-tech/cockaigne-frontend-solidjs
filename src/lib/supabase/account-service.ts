@@ -65,6 +65,7 @@ async function updateAccount(update: AccountUpdate): Promise<string | undefined>
     if (error.code === "23505") {
       return "Benutzername bereits vergeben";
     }
+    return "Da ist leider etwas schief gegangen :(";
   }
 }
 

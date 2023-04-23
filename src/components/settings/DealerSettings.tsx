@@ -3,9 +3,10 @@ import AddressSettings from "~/components/settings/AddressSettings";
 import CategorySelect from "~/components/ui/CategorySelect";
 import ImagePicker from "~/components/ui/ImagePicker";
 import Input from "~/components/ui/Input";
-import { account } from "~/lib/stores/account-store";
+import { profileImageUrl } from "~/lib/stores/account-store";
+import { accountCopy, setAccountCopy, setNewProfileImage } from "~/routes/settings";
 
-export default function DealerSettings(props: { onProfileImageSelected: (image: File) => void }) {
+export default function DealerSettings() {
   const [tabIndex, setTabIndex] = createSignal(0);
 
   return (
@@ -23,26 +24,23 @@ export default function DealerSettings(props: { onProfileImageSelected: (image: 
       </div>
       <Show when={tabIndex() === 0}>
         <div class="flex flex-col gap-3">
-          <Input label="Firmenname" value={account.username} onChange={(value) => (account.username = value)} />
-          <Input label="E-Mail" value={account.username} disabled />
-          <Input label="Telefonnummer" type="tel" value={account.phone} onChange={(value) => (account.phone = value)} />
-          <Input label="Umsatzsteuer ID" value={account.tax_id} onChange={(value) => (account.tax_id = value)} />
-          <CategorySelect
-            label="Branche"
-            value={account.default_category || 1}
-            onSelect={(value) => (account.default_category = value)}
+          <Input label="Firmenname" value={accountCopy.username} onChange={(value) => setAccountCopy("username", value)} />
+          <Input label="E-Mail" value={accountCopy.email} disabled />
+          <Input
+            label="Telefonnummer"
+            type="tel"
+            value={accountCopy.phone}
+            onChange={(value) => setAccountCopy("phone", value)}
           />
+          <Input label="Umsatzsteuer ID" value={accountCopy.tax_id} onChange={(value) => setAccountCopy("tax_id", value)} />
+          <CategorySelect label="Branche" onSelect={(value) => setAccountCopy("default_category", value)} />
         </div>
       </Show>
       <Show when={tabIndex() === 1}>
         <AddressSettings />
       </Show>
       <Show when={tabIndex() === 2}>
-        <ImagePicker
-          imagePreview={account.profileImageUrl}
-          onImageSelected={props.onProfileImageSelected}
-          buttonText="Profilbild ändern"
-        />
+        <ImagePicker imagePreview={profileImageUrl()} onImageSelected={setNewProfileImage} buttonText="Profilbild ändern" />
       </Show>
     </>
   );

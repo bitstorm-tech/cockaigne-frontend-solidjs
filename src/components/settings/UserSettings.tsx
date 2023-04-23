@@ -2,9 +2,10 @@ import { createSignal } from "solid-js";
 import Button from "~/components/ui/Button";
 import ImagePicker from "~/components/ui/ImagePicker";
 import Input from "~/components/ui/Input";
-import { account, setAccount } from "~/lib/stores/account-store";
+import { profileImageUrl } from "~/lib/stores/account-store";
+import { accountCopy, setAccountCopy, setNewProfileImage } from "~/routes/settings";
 
-export default function UserSettings(props: { onProfileImageSelected: (image: File) => void }) {
+export default function UserSettings() {
   const [tabIndex, setTabIndex] = createSignal(0);
 
   async function changePassword() {}
@@ -26,17 +27,13 @@ export default function UserSettings(props: { onProfileImageSelected: (image: Fi
       </div>
       {tabIndex() === 0 ? (
         <>
-          <Input label="Benutzername" value={account.username} onChange={(value) => setAccount("username", value)} />
-          <Input label="E-Mail" value={account.email} disabled />
+          <Input label="Benutzername" value={accountCopy.username} onChange={(value) => setAccountCopy("username", value)} />
+          <Input label="E-Mail" value={accountCopy.email} disabled />
           <Button onClick={changePassword}>Passwort ändern</Button>
           <Button onClick={notify}>Notification Test</Button>
         </>
       ) : (
-        <ImagePicker
-          imagePreview={account.profileImageUrl}
-          onImageSelected={props.onProfileImageSelected}
-          buttonText="Profilbild ändern"
-        />
+        <ImagePicker imagePreview={profileImageUrl()} onImageSelected={setNewProfileImage} buttonText="Profilbild ändern" />
       )}
     </>
   );

@@ -1,6 +1,7 @@
 import remove from "lodash/remove";
 import { Extent } from "ol/extent";
 import { Position } from "~/lib/geo/geo.types";
+import { account } from "~/lib/stores/account-store";
 import authService from "~/lib/supabase/auth-service";
 import storageService from "~/lib/supabase/storage-service";
 import dateTimeUtils, { getDateTimeAsIsoString } from "~/lib/utils/date-time.utils";
@@ -295,7 +296,7 @@ export function newDeal(): DealUpsert {
     description: "",
     duration: 24,
     template: false,
-    category_id: 1
+    category_id: account.default_category || 1
   };
 }
 

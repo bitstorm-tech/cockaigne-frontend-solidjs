@@ -1,18 +1,38 @@
+import { createSignal } from "solid-js";
 import { createStore } from "solid-js/store";
 import accountService from "~/lib/supabase/account-service";
 import { Account } from "~/lib/supabase/public-types";
 import storageService from "~/lib/supabase/storage-service";
 
-export const [account, setAccount] = createStore<Partial<Account>>({
+export type AccountStore = Partial<
+  Pick<Account, "username" | "email" | "street" | "house_number" | "city" | "zip" | "tax_id" | "phone" | "default_category">
+>;
+
+export const [account, setAccount] = createStore<AccountStore>({
   username: "",
-  dealer: false
+  email: ""
 });
+
+export const [profileImageUrl, setProfileImageUrl] = createSignal("");
 
 export async function loadAccount() {
   const acc = await accountService.getAccount();
 
-  if (acc) {
-    acc.profileImageUrl = await storageService.getProfileImage();
-    setAccount(acc);
+  if (!acc) {
+    return;
   }
+
+  setAccount({
+    username: acc.username,
+    email: acc.email,
+    street: acc.street,
+    house_number: acc.house_number,
+    city: acc.city,
+    zip: acc.zip,
+    tax_id: acc.tax_id,
+    phone: acc.phone,
+    default_category: acc.default_category
+  });
+
+  setProfileImageUrl(await storageService.getProfileImage(acc.id, acc.dealer));
 }
