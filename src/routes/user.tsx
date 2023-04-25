@@ -1,4 +1,6 @@
-import { createResource, createSignal, onMount } from "solid-js";
+import { createSignal, onMount, Show, Suspense } from "solid-js";
+import { A } from "solid-start";
+import EmptyContent from "~/components/ui/EmptyContent";
 import FireIcon from "~/components/ui/icons/FireIcon";
 import HeartIcon from "~/components/ui/icons/HeartIcon";
 import StarIcon from "~/components/ui/icons/StarIcon";
@@ -6,20 +8,30 @@ import UserDealList from "~/components/user/UserDealList";
 import UserFavoriteDealerList from "~/components/user/UserFavoriteDealerList";
 import UserHeader from "~/components/user/UserHeader";
 import UserHotDealList from "~/components/user/UserHotDealList";
+import { deals, loadActiveAndHotDeals } from "~/lib/stores/deal-store";
 import { setCurrentPage } from "~/lib/stores/navigation-store";
-import dealService from "~/lib/supabase/deal-service";
-import locationService from "~/lib/supabase/location-service";
-
-async function fetchDeals() {
-  const filter = await locationService.createFilterByCurrentLocationAndSelectedCategories();
-  return await dealService.getDealsByFilter(filter);
-}
 
 export default function User() {
-  onMount(() => setCurrentPage("home"));
   const [tabIndex, setTabIndex] = createSignal(0);
+  loadActiveAndHotDeals().then();
 
-  const [deals] = createResource(fetchDeals);
+  onMount(async () => setCurrentPage("home"));
+
+  const emptyContent = (
+    <EmptyContent>
+      <p>Aktuell gibt es leider keine Deals in deiner Nähe :(</p>
+      <p>
+        <A href="/map?showFilter=true">
+          <u>Filter anpassen</u>
+        </A>
+        {" oder "}
+        <A href="/map">
+          <u>Standort ändern</u>
+        </A>
+        !
+      </p>
+    </EmptyContent>
+  );
 
   return (
     <>
@@ -35,9 +47,17 @@ export default function User() {
           <HeartIcon outline={tabIndex() !== 2} />
         </button>
       </div>
-      {tabIndex() === 0 && <UserDealList deals={deals()!} />}
-      {tabIndex() === 1 && <UserHotDealList />}
-      {tabIndex() === 2 && <UserFavoriteDealerList />}
+      <Suspense>
+        <Show when={tabIndex() === 0}>
+          <UserDealList deals={deals()} emptyContent={emptyContent} />
+        </Show>
+        <Show when={tabIndex() === 1}>
+          <UserHotDealList />
+        </Show>
+        <Show when={tabIndex() === 2}>
+          <UserFavoriteDealerList />
+        </Show>
+      </Suspense>
     </>
   );
 }

@@ -1,5 +1,4 @@
-import { createSignal, For, Show, Suspense } from "solid-js";
-import { A } from "solid-start";
+import { createSignal, For, JSXElement, Show, Suspense } from "solid-js";
 import DealListContainer from "~/components/deal/DealListContainer";
 import EmptyContent from "~/components/ui/EmptyContent";
 import LoadingSpinner from "~/components/ui/icons/LoadingSpinner";
@@ -13,27 +12,13 @@ const loading = (
   </EmptyContent>
 );
 
-export default function UserDealList(props: { deals: ActiveDeal[] }) {
+export default function UserDealList(props: { deals: ActiveDeal[]; emptyContent: JSXElement }) {
   const [openDetailsIndex, setOpenDetailsIndex] = createSignal(-1);
 
   return (
     <DealListContainer>
       <Suspense fallback={loading}>
-        <Show when={props.deals?.length === 0}>
-          <EmptyContent>
-            <p>Aktuell gibt es leider keine Deals in deiner Nähe :(</p>
-            <p>
-              <A href="/map?showFilter=true">
-                <u>Filter anpassen</u>
-              </A>
-              {" oder "}
-              <A href="/map">
-                <u>Standort ändern</u>
-              </A>
-              !
-            </p>
-          </EmptyContent>
-        </Show>
+        <Show when={props.deals?.length === 0}>{props.emptyContent}</Show>
         <For each={props.deals}>
           {(deal, i) => (
             <UserDeal
