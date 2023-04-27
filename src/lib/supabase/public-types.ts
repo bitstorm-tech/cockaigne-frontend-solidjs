@@ -6,6 +6,7 @@ export type NonNullableFields<T> = {
 
 export type Account = Database["public"]["Tables"]["accounts"]["Row"] & { profileImageUrl?: string };
 export type AccountUpdate = Database["public"]["Tables"]["accounts"]["Update"];
+export type AccountInsert = Database["public"]["Tables"]["accounts"]["Insert"] & { password: string };
 export type ActiveDeal = Required<NonNullableFields<Database["public"]["Views"]["active_deals_view"]["Row"]>> & {
   isHot?: boolean;
   isLiked?: boolean;

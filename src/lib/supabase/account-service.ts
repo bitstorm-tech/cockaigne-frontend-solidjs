@@ -1,23 +1,7 @@
 import { munichPosition, type Position, toPostGisPoint } from "~/lib/geo/geo.types";
 import authService from "~/lib/supabase/auth-service";
-import type { Account, AccountUpdate } from "./public-types";
+import type { Account, AccountInsert, AccountUpdate } from "./public-types";
 import { supabase, translateError } from "./supabase-client";
-
-export type RegistrationData = {
-  password: string;
-  isDealer: boolean;
-  defaultCategory: number;
-  street: string;
-  houseNumber: string;
-  city: string;
-  zip: string;
-  phone: string;
-  username: string;
-  email: string;
-  age: string;
-  gender: string;
-  taxId: string;
-};
 
 async function getDefaultCategory(): Promise<number> {
   const userId = await authService.getUserId();
@@ -85,16 +69,11 @@ async function getLocation(street: string, houseNumber: string, city: string, zi
   };
 }
 
-async function register(registrationData: RegistrationData): Promise<string | undefined> {
+async function register(account: AccountInsert): Promise<string | undefined> {
   let position: Position = munichPosition;
 
-  if (registrationData.isDealer) {
-    const _position = await getLocation(
-      registrationData.street,
-      registrationData.houseNumber,
-      registrationData.city,
-      registrationData.zip
-    );
+  if (account.is_dealer) {
+    const _position = await getLocation(account.street!, account.house_number!, account.city!, account.zip + "");
 
     if (!_position) {
       return "Adresse ist ungültig";
@@ -104,24 +83,24 @@ async function register(registrationData: RegistrationData): Promise<string | un
   }
 
   let payload = {
-    isDealer: registrationData.isDealer,
-    defaultCategory: registrationData.defaultCategory,
-    street: registrationData.street,
-    houseNumber: registrationData.houseNumber,
-    city: registrationData.city,
-    zip: registrationData.zip,
-    phone: registrationData.phone,
-    username: registrationData.username,
-    email: registrationData.email,
-    age: registrationData.age,
-    gender: registrationData.gender,
-    taxId: registrationData.taxId,
+    isDealer: account.is_dealer,
+    defaultCategory: account.default_category,
+    street: account.street,
+    houseNumber: account.house_number,
+    city: account.city,
+    zip: account.zip,
+    phone: account.phone,
+    username: account.username,
+    email: account.email,
+    age: account.age,
+    gender: account.gender,
+    taxId: account.tax_id,
     location: toPostGisPoint(position)
   };
 
   const { error } = await supabase.auth.signUp({
-    email: registrationData.email,
-    password: registrationData.password,
+    email: account.email,
+    password: account.password,
     options: {
       data: payload
     }

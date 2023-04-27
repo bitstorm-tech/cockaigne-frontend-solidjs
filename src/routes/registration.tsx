@@ -2,10 +2,24 @@ import { createEffect, createSignal, Show } from "solid-js";
 import { useNavigate } from "solid-start";
 import Alert from "~/components/ui/Alert";
 import Button from "~/components/ui/Button";
+import ButtonGroup from "~/components/ui/ButtonGroup";
 import CategorySelect from "~/components/ui/CategorySelect";
 import Checkbox from "~/components/ui/Checkbox";
 import Input from "~/components/ui/Input";
 import accountService from "~/lib/supabase/account-service";
+
+const genderOptions = {
+  m: "Mann",
+  f: "Frau"
+};
+
+const ageOptions = {
+  1: "Bis 16",
+  2: "17-24",
+  3: "25-36",
+  4: "37-45",
+  5: "46+"
+};
 
 export default function Registration() {
   const navigate = useNavigate();
@@ -14,31 +28,31 @@ export default function Registration() {
   const [isDealer, setIsDealer] = createSignal(false);
   const [errorMessage, setErrorMessage] = createSignal("");
 
-  const [email, setEmail] = createSignal("");
-  const [username, setUsername] = createSignal("");
-  const [password, setPassword] = createSignal("");
-  const [street, setStreet] = createSignal("");
-  const [houseNumber, setHouseNumber] = createSignal("");
-  const [city, setCity] = createSignal("");
-  const [zip, setZip] = createSignal("");
-  const [phone, setPhone] = createSignal("");
-  const [taxId, setTaxId] = createSignal("");
-  const [age, setAge] = createSignal("111");
-  const [gender, setGender] = createSignal("111");
-  const [defaultCategory, setDefaultCategory] = createSignal(0);
+  const [email, setEmail] = createSignal<string>();
+  const [username, setUsername] = createSignal<string>();
+  const [password, setPassword] = createSignal<string>();
+  const [street, setStreet] = createSignal<string>();
+  const [houseNumber, setHouseNumber] = createSignal<string>();
+  const [city, setCity] = createSignal<string>();
+  const [zip, setZip] = createSignal<number>();
+  const [phone, setPhone] = createSignal<string>();
+  const [taxId, setTaxId] = createSignal<string>();
+  const [age, setAge] = createSignal<number>();
+  const [gender, setGender] = createSignal<string>();
+  const [defaultCategory, setDefaultCategory] = createSignal<number>();
 
   createEffect(() => {
     const disabled =
-      email().length === 0 ||
-      password().length === 0 ||
-      username().length === 0 ||
-      (isDealer() && street().length === 0) ||
-      (isDealer() && houseNumber().length === 0) ||
-      (isDealer() && city().length === 0) ||
-      (isDealer() && zip().length === 0) ||
-      (isDealer() && phone().length === 0) ||
-      (!isDealer() && age().length === 0) ||
-      (!isDealer() && gender().length === 0);
+      !email() ||
+      !password() ||
+      !username() ||
+      (isDealer() && !street()) ||
+      (isDealer() && !houseNumber()) ||
+      (isDealer() && !city()) ||
+      (isDealer() && !zip()) ||
+      (isDealer() && !phone()) ||
+      (!isDealer() && !age()) ||
+      (!isDealer() && !gender());
     setDisabled(disabled);
   });
 
@@ -46,19 +60,19 @@ export default function Registration() {
     setLoading(true);
 
     const error = await accountService.register({
-      email: email(),
-      password: password(),
-      isDealer: isDealer(),
-      defaultCategory: defaultCategory(),
+      email: email()!,
+      password: password()!,
+      is_dealer: isDealer(),
+      default_category: defaultCategory(),
       street: street(),
-      houseNumber: houseNumber(),
+      house_number: houseNumber(),
       city: city(),
       zip: zip(),
       phone: phone(),
-      username: username(),
+      username: username()!,
       age: age(),
       gender: gender(),
-      taxId: taxId()
+      tax_id: taxId()
     });
 
     if (error) {
@@ -67,7 +81,7 @@ export default function Registration() {
       return;
     }
 
-    navigate(`/activate/${email}`);
+    navigate(`/activate/${email()}`);
   }
 
   return (
@@ -98,8 +112,8 @@ export default function Registration() {
         <Input label="Umsatzsteuer ID" type="text" onChange={setTaxId} />
       </Show>
       <Show when={!isDealer()}>
-        {/*<ButtonGroup label="Geschlecht" options={genderOptions} bind:value={gender} />*/}
-        {/*<ButtonGroup label="Alter" options={ageOptions} bind:value={age} />*/}
+        <ButtonGroup label="Geschlecht" options={genderOptions} onChange={setGender} />
+        <ButtonGroup label="Alter" options={ageOptions} onChange={setAge} />
       </Show>
 
       <div class="grid grid-cols-2 gap-4 pt-6">

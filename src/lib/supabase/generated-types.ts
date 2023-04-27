@@ -13,12 +13,12 @@ export interface Database {
         Row: {
           age: number | null
           city: string | null
-          dealer: boolean
           default_category: number | null
           email: string
           gender: string | null
           house_number: string | null
           id: string
+          is_dealer: boolean
           location: unknown | null
           phone: string | null
           search_radius: number
@@ -31,12 +31,12 @@ export interface Database {
         Insert: {
           age?: number | null
           city?: string | null
-          dealer?: boolean
           default_category?: number | null
           email: string
           gender?: string | null
           house_number?: string | null
           id?: string
+          is_dealer?: boolean
           location?: unknown | null
           phone?: string | null
           search_radius?: number
@@ -49,12 +49,12 @@ export interface Database {
         Update: {
           age?: number | null
           city?: string | null
-          dealer?: boolean
           default_category?: number | null
           email?: string
           gender?: string | null
           house_number?: string | null
           id?: string
+          is_dealer?: boolean
           location?: unknown | null
           phone?: string | null
           search_radius?: number
@@ -341,14 +341,6 @@ export interface Database {
           title: string | null
           username: string | null
         }[]
-      }
-      get_favorite_dealer_deals: {
-        Args: Record<PropertyKey, never>
-        Returns: Record<string, unknown>[]
-      }
-      get_favorite_dealers: {
-        Args: Record<PropertyKey, never>
-        Returns: Record<string, unknown>[]
       }
     }
     Enums: {

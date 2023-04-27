@@ -3,7 +3,7 @@ import { mergeProps } from "solid-js";
 export default function Input(props: {
   id?: string;
   label: string;
-  textCenter?: boolean;
+  centerText?: boolean;
   letterSpacing?: boolean;
   type?: string;
   placeholder?: string;
@@ -17,7 +17,7 @@ export default function Input(props: {
   props = mergeProps(
     {
       id: props.label + Math.random().toString(),
-      textCenter: false,
+      centerText: false,
       letterSpacing: false,
       type: "text",
       placeholder: "",
@@ -43,7 +43,7 @@ export default function Input(props: {
       </label>
       <input
         class="input-bordered input focus:border-primary focus:outline-none"
-        classList={{ "text-center": props.textCenter, "tracking-[0.5rem]": props.letterSpacing }}
+        classList={{ "text-center": props.centerText, "tracking-[0.5rem]": props.letterSpacing }}
         id={props.id}
         type={props.type}
         placeholder={props.placeholder}
