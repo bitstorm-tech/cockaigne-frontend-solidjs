@@ -8,6 +8,7 @@ export type Account = Database["public"]["Tables"]["accounts"]["Row"] & { profil
 export type AccountUpdate = Database["public"]["Tables"]["accounts"]["Update"];
 export type ActiveDeal = Required<NonNullableFields<Database["public"]["Views"]["active_deals_view"]["Row"]>> & {
   isHot?: boolean;
+  isLiked?: boolean;
   imageUrls?: string[];
 };
 export type FutureDeal = Required<NonNullableFields<Database["public"]["Views"]["future_deals_view"]["Row"]>> & {
@@ -28,5 +29,6 @@ export type ReportedDeal = Database["public"]["Tables"]["reported_deals"]["Row"]
 export type SelectedCategory = Database["public"]["Tables"]["selected_categories"]["Row"];
 export type GetActiveDealsWithinExtentFunctionArguments =
   Database["public"]["Functions"]["get_active_deals_within_extent"]["Args"];
+export type Like = Database["public"]["Tables"]["likes"]["Row"];
 
 export type FutureActivePastDeal = FutureDeal | ActiveDeal | PastDeal;

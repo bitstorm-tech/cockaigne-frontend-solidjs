@@ -37,7 +37,7 @@ export default function Textarea(props: {
         rows={props.lines}
         placeholder={props.placeholder}
         disabled={props.disabled}
-        onChange={(e) => props.onChange!(e.target.value)}
+        onInput={(e) => props.onChange!(e.target.value)}
         onKeyPress={handleKeyPress}
         value={props.value}
       />

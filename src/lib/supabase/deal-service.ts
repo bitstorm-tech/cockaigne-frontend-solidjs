@@ -12,8 +12,10 @@ import type {
   DealUpsert,
   FutureDeal,
   GetActiveDealsWithinExtentFunctionArguments,
+  Like,
   PastDeal
 } from "./public-types";
+import { DealerRatingInsert, DealerRatingWithUsername } from "./public-types";
 import { supabase } from "./supabase-client";
 
 export interface DealFilter {
@@ -257,35 +259,50 @@ function rotateByCurrentTime(deals: ActiveDeal[]): ActiveDeal[] {
   return [...deals, ...dealsAfterNow];
 }
 
-async function toggleLike(deal: ActiveDeal): Promise<number> {
+async function toggleLike(dealId: string) {
   const userId = await authService.getUserId();
+
+  if (!userId) return 0;
 
   const { count, error } = await supabase
     .from("likes")
     .select("*", { count: "exact", head: true })
     .eq("user_id", userId)
-    .eq("deal_id", deal.id);
+    .eq("deal_id", dealId);
 
-  if (error || !userId || !deal.id) {
+  if (error) {
     console.log("Can't toggle like:", error);
-    return deal.likes || 0;
+    return;
   }
 
   const query =
     count === 0
       ? supabase.from("likes").insert({
           user_id: userId,
-          deal_id: deal.id
+          deal_id: dealId
         })
-      : supabase.from("likes").delete().eq("user_id", userId).eq("deal_id", deal.id);
+      : supabase.from("likes").delete().eq("user_id", userId).eq("deal_id", dealId);
 
-  await query;
+  const result = await query;
 
-  if (!deal.likes) {
-    deal.likes = 0;
+  if (result.error) {
+    console.log("Can't toggle like:", result.error);
+  }
+}
+
+async function getLikes(): Promise<Like[]> {
+  const userId = await authService.getUserId();
+
+  if (!userId) return [];
+
+  const { data, error } = await supabase.from("likes").select().eq("user_id", userId);
+
+  if (error) {
+    console.log("Can't get likes:", error);
+    return [];
   }
 
-  return count === 0 ? deal.likes + 1 : deal.likes - 1;
+  return data;
 }
 
 export function newDeal(): DealUpsert {
@@ -298,6 +315,39 @@ export function newDeal(): DealUpsert {
     template: false,
     category_id: account.default_category || 1
   };
+}
+
+async function getRatingsForDealer(dealerId: string): Promise<DealerRatingWithUsername[]> {
+  const { data } = await supabase.from("dealer_ratings_view").select().eq("dealer_id", dealerId);
+
+  if (!data) {
+    return [];
+  }
+
+  return data;
+}
+
+async function saveRating(rating: DealerRatingInsert): Promise<DealerRatingWithUsername | undefined> {
+  const { error, data } = await supabase.from("dealer_ratings").insert(rating);
+
+  if (error) {
+    console.error("Can't save rating:", error);
+    return;
+  }
+
+  const result = await supabase
+    .from("dealer_ratings_view")
+    .select()
+    .eq("user_id", rating.user_id)
+    .eq("dealer_id", rating.dealer_id)
+    .single();
+
+  if (result.error) {
+    console.log("Can't get dealer rating after save:", result.error);
+    return;
+  }
+
+  return result.data;
 }
 
 export default {
@@ -314,5 +364,8 @@ export default {
   rotateByCurrentTime,
   toggleHotDeal,
   toggleLike,
-  upsertDeal
+  upsertDeal,
+  getLikes,
+  getRatingsForDealer,
+  saveRating
 };
