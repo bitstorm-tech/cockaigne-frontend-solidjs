@@ -1,7 +1,7 @@
 import { createResource } from "solid-js";
 import Select from "~/components/ui/Select";
 import { account } from "~/lib/stores/account-store";
-import categoryService from "~/lib/supabase/category-service";
+import { getCategories } from "~/lib/supabase/category-service";
 
 export default function CategorySelect(props: {
   label?: string;
@@ -9,7 +9,7 @@ export default function CategorySelect(props: {
   value?: number;
   disabled?: boolean;
 }) {
-  const [categories] = createResource(categoryService.getCategories, { initialValue: [] });
+  const [categories] = createResource(getCategories, { initialValue: [] });
 
   return (
     <Select

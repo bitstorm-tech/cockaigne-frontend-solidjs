@@ -1,7 +1,7 @@
 import { DealerRatingInsert, DealerRatingWithUsername } from "~/lib/supabase/public-types";
 import { supabase } from "./supabase-client";
 
-async function getRatings(dealerId: string): Promise<DealerRatingWithUsername[]> {
+export async function getRatings(dealerId: string): Promise<DealerRatingWithUsername[]> {
   const { data } = await supabase.from("dealer_ratings_view").select().eq("dealer_id", dealerId);
 
   if (!data) {
@@ -11,7 +11,7 @@ async function getRatings(dealerId: string): Promise<DealerRatingWithUsername[]>
   return data;
 }
 
-async function saveRating(rating: DealerRatingInsert): Promise<DealerRatingWithUsername | undefined> {
+export async function saveRating(rating: DealerRatingInsert): Promise<DealerRatingWithUsername | undefined> {
   const { error, data } = await supabase.from("dealer_ratings").insert(rating);
 
   if (error) {
@@ -33,8 +33,3 @@ async function saveRating(rating: DealerRatingInsert): Promise<DealerRatingWithU
 
   return result.data;
 }
-
-export default {
-  getRatings,
-  saveRating
-};

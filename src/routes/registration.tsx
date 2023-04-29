@@ -6,7 +6,7 @@ import ButtonGroup from "~/components/ui/ButtonGroup";
 import CategorySelect from "~/components/ui/CategorySelect";
 import Checkbox from "~/components/ui/Checkbox";
 import Input from "~/components/ui/Input";
-import accountService from "~/lib/supabase/account-service";
+import { saveAccount } from "~/lib/supabase/account-service";
 
 const genderOptions = {
   m: "Mann",
@@ -59,7 +59,7 @@ export default function Registration() {
   async function register() {
     setLoading(true);
 
-    const error = await accountService.register({
+    const error = await saveAccount({
       email: email()!,
       password: password()!,
       is_dealer: isDealer(),

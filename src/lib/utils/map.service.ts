@@ -13,8 +13,14 @@ import OSM from "ol/source/OSM";
 import VectorSource from "ol/source/Vector";
 import { Fill, Icon, Stroke, Style } from "ol/style";
 import { fromOpenLayersCoordinate, Position, toOpenLayersCoordinate } from "~/lib/geo/geo.types";
-import dealService, { DealFilter } from "~/lib/supabase/deal-service";
-import locationService from "~/lib/supabase/location-service";
+import { DealFilter, getDealsByFilter } from "~/lib/supabase/deal-service";
+import {
+  getLocation,
+  getSearchRadius,
+  saveLocation,
+  saveSearchRadius,
+  useCurrentLocation
+} from "~/lib/supabase/location-service";
 import { ActiveDeal } from "~/lib/supabase/public-types";
 import { getIconPathById } from "./icon-mapping";
 
@@ -34,21 +40,21 @@ export class MapService {
       extent
     };
 
-    const deals = await dealService.getDealsByFilter(filter);
+    const deals = await getDealsByFilter(filter);
     this.setDeals(deals);
   }, 1000);
 
   static async init(htmlElementId: string): Promise<MapService> {
     const mapService = new MapService();
     useGeographic();
-    const location = await locationService.getLocation();
+    const location = await getLocation();
     const center = toOpenLayersCoordinate(location);
 
     mapService.view.setCenter(center);
 
     mapService.centerPoint = new Circle(center, mapService.transformRadius(2));
 
-    const searchRadius = await locationService.getSearchRadius();
+    const searchRadius = await getSearchRadius();
     mapService.circle = new Circle(center, mapService.transformRadius(searchRadius));
 
     mapService.map = new Map({
@@ -88,15 +94,15 @@ export class MapService {
     });
 
     mapService.map.on("click", async (event) => {
-      const useCurrentLocation = await locationService.useCurrentLocation();
+      const _useCurrentLocation = await useCurrentLocation();
 
-      if (useCurrentLocation) {
+      if (_useCurrentLocation) {
         return;
       }
 
       mapService.moveCircle(event.coordinate);
       mapService.saveCenter(event.coordinate);
-      locationService.saveLocation(fromOpenLayersCoordinate(event.coordinate));
+      saveLocation(fromOpenLayersCoordinate(event.coordinate));
     });
 
     mapService.map.on("moveend", () => {
@@ -113,7 +119,7 @@ export class MapService {
   }
 
   async jumpToCurrentLocation() {
-    const postion = await locationService.getLocation();
+    const postion = await getLocation();
     const center = toOpenLayersCoordinate(postion);
     this.view.setCenter(center);
     this.moveCircle();
@@ -121,7 +127,7 @@ export class MapService {
 
   setRadius(radius: number) {
     this.circle.setRadius(this.transformRadius(radius));
-    locationService.saveSearchRadius(radius);
+    saveSearchRadius(radius);
   }
 
   setDeals(deals: ActiveDeal[]) {
@@ -136,7 +142,7 @@ export class MapService {
   }
 
   private async moveCircle(location?: Coordinate) {
-    const _location = await locationService.getLocation();
+    const _location = await getLocation();
     const center = toOpenLayersCoordinate(_location);
     const newCoordinates = location ? location : center;
     this.circle.setCenter(newCoordinates);
@@ -174,6 +180,6 @@ export class MapService {
 
   private saveCenter(coordinate: Coordinate) {
     const position = fromOpenLayersCoordinate(coordinate);
-    locationService.saveLocation(position).then();
+    saveLocation(position).then();
   }
 }

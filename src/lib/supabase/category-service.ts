@@ -1,8 +1,8 @@
-import authService from "~/lib/supabase/auth-service";
+import { getUserId } from "~/lib/supabase/auth-service";
 import type { Category } from "./public-types";
 import { supabase } from "./supabase-client";
 
-async function getCategories(): Promise<Category[]> {
+export async function getCategories(): Promise<Category[]> {
   const { data } = await supabase.from("categories").select();
 
   if (!data) {
@@ -12,7 +12,7 @@ async function getCategories(): Promise<Category[]> {
   return data;
 }
 
-async function getSelectedCategories(): Promise<number[]> {
+export async function getSelectedCategories(): Promise<number[]> {
   const { data } = await supabase.from("selected_categories").select("category_id");
 
   if (!data) {
@@ -21,8 +21,8 @@ async function getSelectedCategories(): Promise<number[]> {
   return data.map((selectedCategory) => selectedCategory.category_id);
 }
 
-async function upddateSelcetedCateogry(newCategoryIds: number[]) {
-  const userId = await authService.getUserId();
+export async function upddateSelcetedCateogry(newCategoryIds: number[]) {
+  const userId = await getUserId();
 
   if (!userId) {
     return;
@@ -36,9 +36,3 @@ async function upddateSelcetedCateogry(newCategoryIds: number[]) {
 
   await supabase.from("selected_categories").insert(inserts);
 }
-
-export default {
-  getCategories,
-  getSelectedCategories,
-  upddateSelcetedCateogry
-};

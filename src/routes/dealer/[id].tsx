@@ -11,16 +11,16 @@ import ImageIcon from "~/components/ui/icons/ImageIcon";
 import RatingIcon from "~/components/ui/icons/RatingIcon";
 import { setCurrentPage } from "~/lib/stores/navigation-store";
 import sessionStore from "~/lib/stores/session-store";
-import accountService from "~/lib/supabase/account-service";
-import dealService from "~/lib/supabase/deal-service";
+import { getUsername } from "~/lib/supabase/account-service";
+import { getActiveDealsByDealer } from "~/lib/supabase/deal-service";
 import { ActiveDeal } from "~/lib/supabase/public-types";
 
 export default function Dealer() {
   const navigate = useNavigate();
   const params = useParams();
   const [tabIndex, setTabIndex] = createSignal(0);
-  const [companyName] = createResource(async () => await accountService.getUsername(params.id), { initialValue: "" });
-  const [deals] = createResource(async () => (await dealService.getActiveDealsByDealer(params.id)) as ActiveDeal[], {
+  const [companyName] = createResource(async () => await getUsername(params.id), { initialValue: "" });
+  const [deals] = createResource(async () => (await getActiveDealsByDealer(params.id)) as ActiveDeal[], {
     initialValue: []
   });
 

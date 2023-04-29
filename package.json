@@ -30,7 +30,7 @@
     "npm-check-updates": "16.10.9",
     "postcss": "8.4.23",
     "prettier": "2.8.8",
-    "prettier-plugin-tailwindcss": "0.2.7",
+    "prettier-plugin-tailwindcss": "0.2.8",
     "solid-devtools": "0.26.0",
     "solid-start-node": "0.2.26",
     "solid-start-vercel": "0.2.26",

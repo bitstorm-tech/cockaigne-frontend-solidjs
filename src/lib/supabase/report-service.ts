@@ -1,9 +1,9 @@
-import authService from "~/lib/supabase/auth-service";
+import { getUserId } from "~/lib/supabase/auth-service";
 import type { ReportedDeal } from "./public-types";
 import { supabase } from "./supabase-client";
 
-async function getReport(dealId: string): Promise<ReportedDeal | undefined> {
-  const userId = await authService.getUserId();
+export async function getReport(dealId: string): Promise<ReportedDeal | undefined> {
+  const userId = await getUserId();
 
   if (!userId) return;
 
@@ -17,8 +17,8 @@ async function getReport(dealId: string): Promise<ReportedDeal | undefined> {
   return data;
 }
 
-async function saveReport(dealId: string, reason: string) {
-  const id = await authService.getUserId();
+export async function saveReport(dealId: string, reason: string) {
+  const id = await getUserId();
 
   if (!id) {
     return;
@@ -26,8 +26,3 @@ async function saveReport(dealId: string, reason: string) {
 
   await supabase.from("reported_deals").insert({ deal_id: dealId, reason, reporter_id: id });
 }
-
-export default {
-  getReport,
-  saveReport
-};

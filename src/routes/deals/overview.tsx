@@ -3,14 +3,14 @@ import { createResource, createSignal, onMount } from "solid-js";
 import DealerDealList from "~/components/dealer/DealerDealList";
 import Button from "~/components/ui/Button";
 import { setCurrentPage } from "~/lib/stores/navigation-store";
-import dealService from "~/lib/supabase/deal-service";
+import { getActiveDealsByDealer, getFutureDealsByDealer, getPastDealsByDealer } from "~/lib/supabase/deal-service";
 
 export default function Overview() {
   const navigate = useNavigate();
   const [tabIndex, setTabIndex] = createSignal(0);
-  const [activeDeals] = createResource(async () => await dealService.getActiveDealsByDealer(), { initialValue: [] });
-  const [futureDeals] = createResource(async () => await dealService.getFutureDealsByDealer(), { initialValue: [] });
-  const [pastDeals] = createResource(async () => await dealService.getPastDealsByDealer(), { initialValue: [] });
+  const [activeDeals] = createResource(async () => await getActiveDealsByDealer(), { initialValue: [] });
+  const [futureDeals] = createResource(async () => await getFutureDealsByDealer(), { initialValue: [] });
+  const [pastDeals] = createResource(async () => await getPastDealsByDealer(), { initialValue: [] });
 
   onMount(() => setCurrentPage("dealOverview"));
 

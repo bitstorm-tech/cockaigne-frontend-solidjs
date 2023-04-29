@@ -5,20 +5,20 @@ import Modal from "~/components/ui/Modal";
 import Textarea from "~/components/ui/Textarea";
 import { addressToString, getAddress } from "~/lib/geo/address.service";
 import { Position } from "~/lib/geo/geo.types";
-import locationService from "~/lib/supabase/location-service";
+import { getLocation, useCurrentLocation } from "~/lib/supabase/location-service";
 
 export const [showLocationSettingsModal, setShowLocationSettingsModal] = createSignal(false);
 
 export default function LocationSettingsModal() {
   const [loading, setLoading] = createSignal(false);
   const [address, setAddress] = createSignal("");
-  const [useCurrentLocation, setUseCurrentLocation] = createSignal(false);
+  const [useCurLocation, setUseCurLocation] = createSignal(false);
 
   const button = <Button onClick={() => setShowLocationSettingsModal(false)}>Übernehmen</Button>;
 
   async function onShow() {
-    setUseCurrentLocation(await locationService.useCurrentLocation());
-    const location = await locationService.getLocation();
+    setUseCurLocation(await useCurrentLocation());
+    const location = await getLocation();
     const newAddress = await getAddress(location);
 
     if (newAddress) {
@@ -49,7 +49,7 @@ export default function LocationSettingsModal() {
   }
 
   async function searchCurrentLocation(checked: boolean) {
-    setUseCurrentLocation(checked);
+    setUseCurLocation(checked);
     // useCurrentLocation ? LocationService.startWatching() : LocationService.stopWatching();
   }
 
@@ -61,11 +61,11 @@ export default function LocationSettingsModal() {
       buttons={button}
     >
       <div class="m-2 flex flex-col gap-3">
-        <Textarea label="Adresse" value={address()} onEnter={search} disabled={useCurrentLocation()} lines={2} />
-        <Button onClick={search} disabled={useCurrentLocation()} loading={loading()}>
+        <Textarea label="Adresse" value={address()} onEnter={search} disabled={useCurLocation()} lines={2} />
+        <Button onClick={search} disabled={useCurLocation()} loading={loading()}>
           Suchen
         </Button>
-        <Checkbox label="Aktuellen Standort verwenden" checked={useCurrentLocation()} onChange={searchCurrentLocation} />
+        <Checkbox label="Aktuellen Standort verwenden" checked={useCurLocation()} onChange={searchCurrentLocation} />
       </div>
     </Modal>
   );

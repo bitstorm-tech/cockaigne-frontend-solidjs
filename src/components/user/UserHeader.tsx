@@ -6,10 +6,10 @@ import FavoriteDealerBadge from "~/components/user/FavoriteDealerBadge";
 import HotsBadge from "~/components/user/HotsBadge";
 import ProfileImage from "~/components/user/ProfileImage";
 import { account } from "~/lib/stores/account-store";
-import locationService from "~/lib/supabase/location-service";
+import { getCurrentAddress } from "~/lib/supabase/location-service";
 
 export default function UserHeader() {
-  const [address] = createResource(locationService.getCurrentAddress);
+  const [address] = createResource(getCurrentAddress);
 
   return (
     <div class="flex justify-between text-[#dbdce6]">

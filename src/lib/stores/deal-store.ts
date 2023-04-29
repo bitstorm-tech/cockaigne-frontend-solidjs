@@ -1,6 +1,12 @@
 import { createSignal } from "solid-js";
-import dealService from "~/lib/supabase/deal-service";
-import locationService from "~/lib/supabase/location-service";
+import {
+  getDealsByFilter,
+  getHotDeals,
+  getLikes,
+  toggleHotDeal as toggleHot,
+  toggleLike as toggleLik
+} from "~/lib/supabase/deal-service";
+import { createFilterByCurrentLocationAndSelectedCategories } from "~/lib/supabase/location-service";
 import { ActiveDeal, Like } from "~/lib/supabase/public-types";
 
 export const [deals, setDeals] = createSignal<ActiveDeal[]>([]);
@@ -8,12 +14,8 @@ export const [hotDeals, setHotDeals] = createSignal<ActiveDeal[]>([]);
 export const [likes, setLikes] = createSignal<Like[]>([]);
 
 export async function loadActiveAndHotDeals() {
-  const filter = await locationService.createFilterByCurrentLocationAndSelectedCategories();
-  const [loadedDeals, loadedHotDeals, loadedLikes] = await Promise.all([
-    dealService.getDealsByFilter(filter),
-    dealService.getHotDeals(),
-    dealService.getLikes()
-  ]);
+  const filter = await createFilterByCurrentLocationAndSelectedCategories();
+  const [loadedDeals, loadedHotDeals, loadedLikes] = await Promise.all([getDealsByFilter(filter), getHotDeals(), getLikes()]);
   loadedHotDeals.forEach((d) => (d.isHot = true));
 
   setHotDeals(loadedHotDeals);
@@ -24,7 +26,7 @@ export async function loadActiveAndHotDeals() {
 }
 
 export async function toggleHotDeal(dealId: string) {
-  const hotDeal = await dealService.toggleHotDeal(dealId);
+  const hotDeal = await toggleHot(dealId);
 
   if (hotDeal) {
     hotDeal.isHot = true;
@@ -37,7 +39,7 @@ export async function toggleHotDeal(dealId: string) {
 }
 
 export async function toggleLike(dealId: string) {
-  await dealService.toggleLike(dealId);
+  await toggleLik(dealId);
 
   const deal = deals().find((d) => d.id === dealId);
   if (deal) {

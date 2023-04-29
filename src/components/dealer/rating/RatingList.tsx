@@ -6,12 +6,12 @@ import EmptyContent from "~/components/ui/EmptyContent";
 import LoadingSpinner from "~/components/ui/icons/LoadingSpinner";
 import sessionStore from "~/lib/stores/session-store";
 import { DealerRatingInsert } from "~/lib/supabase/public-types";
-import ratingService from "~/lib/supabase/rating-service";
+import { getRatings, saveRating } from "~/lib/supabase/rating-service";
 
 export default function RatingList(props: { id: string }) {
   const [showRatingButton, setShowRatingButton] = createSignal(false);
   const [averageRating, setAverageRating] = createSignal(0);
-  const [ratings, { mutate }] = createResource(async () => await ratingService.getRatings(props.id), { initialValue: [] });
+  const [ratings, { mutate }] = createResource(async () => await getRatings(props.id), { initialValue: [] });
 
   createEffect(() => {
     setShowRatingButton(!sessionStore.isDealer && !ratings()?.some((rating) => rating.user_id === sessionStore.userId));
@@ -21,7 +21,7 @@ export default function RatingList(props: { id: string }) {
     setAverageRating(sum / ratings().length);
   });
 
-  async function saveRating(text: string, stars: number) {
+  async function save(text: string, stars: number) {
     const rating: DealerRatingInsert = {
       dealer_id: props.id,
       user_id: sessionStore.userId || "",
@@ -29,7 +29,7 @@ export default function RatingList(props: { id: string }) {
       stars: stars
     };
 
-    const newRating = await ratingService.saveRating(rating);
+    const newRating = await saveRating(rating);
     if (newRating) {
       mutate((old) => [newRating, ...old]);
     }
@@ -64,7 +64,7 @@ export default function RatingList(props: { id: string }) {
       {/*  <RatingListEntry rating={newRating()!} />*/}
       {/*</Show>*/}
       <For each={ratings()}>{(rating) => <RatingListEntry rating={rating} />}</For>
-      <RatingModal onRatingCreate={saveRating} />
+      <RatingModal onRatingCreate={save} />
     </Suspense>
   );
 }

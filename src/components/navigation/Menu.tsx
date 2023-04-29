@@ -5,13 +5,13 @@ import LoginIcon from "~/components/ui/icons/LoginIcon";
 import LogoutIcon from "~/components/ui/icons/LogoutIcon";
 import NewsIcon from "~/components/ui/icons/NewsIcon";
 import RegistrationIcon from "~/components/ui/icons/RegistrationIcon";
-import authService from "~/lib/supabase/auth-service";
+import { logout } from "~/lib/supabase/auth-service";
 
 export default function Menu({ isLoggendIn = false }) {
   const navigate = useNavigate();
 
-  async function logout() {
-    await authService.logout();
+  async function doLogout() {
+    await logout();
     navigate("/");
   }
 
@@ -27,7 +27,7 @@ export default function Menu({ isLoggendIn = false }) {
             <NewsIcon />
             Was gibt es Neues?
           </A>
-          <button onClick={logout} class="flex h-8 cursor-pointer items-center gap-3">
+          <button onClick={doLogout} class="flex h-8 cursor-pointer items-center gap-3">
             <LogoutIcon />
             Logout
           </button>

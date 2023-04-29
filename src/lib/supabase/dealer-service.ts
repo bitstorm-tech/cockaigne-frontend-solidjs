@@ -1,8 +1,8 @@
-import authService from "~/lib/supabase/auth-service";
+import { getUserId } from "~/lib/supabase/auth-service";
 import type { Dealer, FavoriteDealer } from "./public-types";
 import { supabase } from "./supabase-client";
 
-async function getDealer(dealerId: string): Promise<Dealer | null> {
+export async function getDealer(dealerId: string): Promise<Dealer | null> {
   const { data } = await supabase.from("dealer_view").select().eq("id", dealerId).single();
 
   if (!data) {
@@ -12,8 +12,8 @@ async function getDealer(dealerId: string): Promise<Dealer | null> {
   return data;
 }
 
-async function toggleFavoriteDealer(dealerId: string) {
-  const userId = await authService.getUserId();
+export async function toggleFavoriteDealer(dealerId: string) {
+  const userId = await getUserId();
 
   if (!userId) return;
 
@@ -26,8 +26,8 @@ async function toggleFavoriteDealer(dealerId: string) {
   }
 }
 
-async function isFavoriteDealer(dealerId: string): Promise<boolean> {
-  const userId = await authService.getUserId();
+export async function isFavoriteDealer(dealerId: string): Promise<boolean> {
+  const userId = await getUserId();
 
   if (!userId) return false;
 
@@ -45,8 +45,8 @@ async function isFavoriteDealer(dealerId: string): Promise<boolean> {
   return data.length !== 0;
 }
 
-async function getFavoriteDealers(): Promise<FavoriteDealer[]> {
-  const userId = await authService.getUserId();
+export async function getFavoriteDealers(): Promise<FavoriteDealer[]> {
+  const userId = await getUserId();
 
   if (!userId) return [];
 
@@ -58,10 +58,3 @@ async function getFavoriteDealers(): Promise<FavoriteDealer[]> {
 
   return data;
 }
-
-export default {
-  getDealer,
-  toggleFavoriteDealer,
-  isFavoriteDealer,
-  getFavoriteDealers
-};

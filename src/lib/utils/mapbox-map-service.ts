@@ -1,12 +1,12 @@
 import mapboxgl, { Map } from "mapbox-gl";
+import { getLocation } from "~/lib/supabase/location-service";
 import { toMapboxCoordinates } from "./geo/geo.types";
-import locationService from "./supabase/location-service";
 
 mapboxgl.accessToken = "pk.eyJ1Ijoiam9zZWYtYmF1ZXIiLCJhIjoiY2xmbnMxeHQ4MHA1MzNwcms5MnlvbGwydiJ9.uFWknM7lW9oAwvd9sgC3oA";
 let map: Map;
 
 async function init(htmlElementId: string) {
-  const location = await locationService.getLocation();
+  const location = await getLocation();
 
   map = new mapboxgl.Map({
     container: htmlElementId,
@@ -15,7 +15,3 @@ async function init(htmlElementId: string) {
     zoom: 15
   });
 }
-
-export default {
-  init
-};

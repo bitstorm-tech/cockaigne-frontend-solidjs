@@ -1,11 +1,11 @@
 import { addressToShortString, getAddress } from "~/lib/geo/address.service";
 import { munichPosition, Position, toPostGisPoint } from "~/lib/geo/geo.types";
-import authService from "~/lib/supabase/auth-service";
+import { getUserId } from "~/lib/supabase/auth-service";
 import { DealFilter } from "~/lib/supabase/deal-service";
 import { supabase } from "./supabase-client";
 
-async function useCurrentLocation(): Promise<boolean> {
-  const userId = await authService.getUserId();
+export async function useCurrentLocation(): Promise<boolean> {
+  const userId = await getUserId();
   const { error, data } = await supabase.from("accounts").select("use_current_location").eq("id", userId).single();
 
   if (error) {
@@ -16,8 +16,8 @@ async function useCurrentLocation(): Promise<boolean> {
   return data.use_current_location || false;
 }
 
-async function saveUseCurrentLocation(useCurrentLocation: boolean) {
-  const userId = await authService.getUserId();
+export async function saveUseCurrentLocation(useCurrentLocation: boolean) {
+  const userId = await getUserId();
   const { error } = await supabase.from("accounts").update({ use_current_location: useCurrentLocation }).eq("id", userId);
 
   if (error) {
@@ -25,8 +25,8 @@ async function saveUseCurrentLocation(useCurrentLocation: boolean) {
   }
 }
 
-async function getLocation(): Promise<Position> {
-  const userId = await authService.getUserId();
+export async function getLocation(): Promise<Position> {
+  const userId = await getUserId();
   const { error, data } = await supabase.from("accounts").select("location").eq("id", userId).single();
 
   if (error || !data.location) {
@@ -43,14 +43,14 @@ async function getLocation(): Promise<Position> {
   };
 }
 
-async function saveLocation(location: Position) {
-  const userId = await authService.getUserId();
+export async function saveLocation(location: Position) {
+  const userId = await getUserId();
   const point = toPostGisPoint(location);
   await supabase.from("accounts").update({ location: point }).eq("id", userId);
 }
 
-async function createFilterByCurrentLocationAndSelectedCategories(): Promise<DealFilter> {
-  const userId = await authService.getUserId();
+export async function createFilterByCurrentLocationAndSelectedCategories(): Promise<DealFilter> {
+  const userId = await getUserId();
   const { error, data } = await supabase.from("accounts").select("search_radius, location").eq("id", userId).single();
 
   if (error) {
@@ -77,8 +77,8 @@ async function createFilterByCurrentLocationAndSelectedCategories(): Promise<Dea
   };
 }
 
-async function getSearchRadius(): Promise<number> {
-  const userId = await authService.getUserId();
+export async function getSearchRadius(): Promise<number> {
+  const userId = await getUserId();
 
   if (!userId) {
     console.log("Can't get search radius -> unknown user");
@@ -95,24 +95,13 @@ async function getSearchRadius(): Promise<number> {
   return data.search_radius || 500;
 }
 
-async function saveSearchRadius(searchRadius: number) {
-  const userId = await authService.getUserId();
+export async function saveSearchRadius(searchRadius: number) {
+  const userId = await getUserId();
   await supabase.from("accounts").update({ search_radius: searchRadius }).eq("id", userId);
 }
 
-async function getCurrentAddress(): Promise<string[]> {
+export async function getCurrentAddress(): Promise<string[]> {
   const location = await getLocation();
   const longAddress = await getAddress(location);
   return addressToShortString(longAddress);
 }
-
-export default {
-  createFilterByCurrentLocationAndSelectedCategories,
-  getCurrentAddress,
-  getLocation,
-  getSearchRadius,
-  saveLocation,
-  saveSearchRadius,
-  saveUseCurrentLocation,
-  useCurrentLocation
-};

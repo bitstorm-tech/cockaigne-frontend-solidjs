@@ -1,7 +1,7 @@
 import { createResource, createSignal, onMount } from "solid-js";
 import UserDealList from "~/components/user/UserDealList";
 import { setCurrentPage } from "~/lib/stores/navigation-store";
-import dealService from "~/lib/supabase/deal-service";
+import { getTopDeals } from "~/lib/supabase/deal-service";
 
 export default function Top() {
   const [tabIndex, setTabIndex] = createSignal(10);
@@ -9,7 +9,7 @@ export default function Top() {
   const [deals] = createResource(
     () => tabIndex(),
     async (numberOfDeals: number) => {
-      return dealService.getTopDeals(numberOfDeals);
+      return getTopDeals(numberOfDeals);
     }
   );
 

@@ -7,8 +7,8 @@ import Alert from "~/components/ui/Alert";
 import Button from "~/components/ui/Button";
 import { account, setAccount, setProfileImageUrl } from "~/lib/stores/account-store";
 import sessionStore from "~/lib/stores/session-store";
-import accountService from "~/lib/supabase/account-service";
-import storageService from "~/lib/supabase/storage-service";
+import { updateAccount } from "~/lib/supabase/account-service";
+import { saveProfileImage } from "~/lib/supabase/storage-service";
 
 export const [accountCopy, setAccountCopy] = createStore({ ...account });
 export const [newProfileImage, setNewProfileImage] = createSignal<File>();
@@ -21,8 +21,8 @@ export default function Settings() {
   onMount(() => setAccountCopy({ ...account }));
 
   async function save() {
-    await saveProfileImage();
-    const error = await accountService.updateAccount(accountCopy);
+    await saveImage();
+    const error = await updateAccount(accountCopy);
 
     if (error) {
       setErrorMessage(error);
@@ -32,12 +32,12 @@ export default function Settings() {
     setAccount({ ...accountCopy });
   }
 
-  async function saveProfileImage() {
+  async function saveImage() {
     if (!newProfileImage()) {
       return;
     }
 
-    const profileImageUrl = await storageService.saveProfileImage(newProfileImage()!);
+    const profileImageUrl = await saveProfileImage(newProfileImage()!);
 
     if (profileImageUrl) {
       setProfileImageUrl(profileImageUrl);

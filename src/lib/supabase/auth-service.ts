@@ -12,7 +12,7 @@ export interface Session {
   isDealer: boolean;
 }
 
-async function getSession(): Promise<Session> {
+export async function getSession(): Promise<Session> {
   const { error, data } = await supabase.auth.getSession();
 
   if (error || !data.session) {
@@ -28,7 +28,7 @@ async function getSession(): Promise<Session> {
   };
 }
 
-async function login(email: string, password: string): Promise<string | undefined> {
+export async function login(email: string, password: string): Promise<string | undefined> {
   const { error } = await supabase.auth.signInWithPassword({
     email,
     password
@@ -42,7 +42,7 @@ async function login(email: string, password: string): Promise<string | undefine
   loadAccount().then();
 }
 
-async function logout() {
+export async function logout() {
   const { error } = await supabase.auth.signOut();
   setAccount("username", "");
 
@@ -51,7 +51,7 @@ async function logout() {
   }
 }
 
-async function getUserId(): Promise<string | undefined> {
+export async function getUserId(): Promise<string | undefined> {
   if (isServer) {
     const ctx = useServerContext();
 
@@ -82,7 +82,7 @@ type SupabaseTokens = {
   refreshToken: string;
 };
 
-async function extractTokensFromRequest(request: Request): Promise<SupabaseTokens | undefined> {
+export async function extractTokensFromRequest(request: Request): Promise<SupabaseTokens | undefined> {
   const cookies = request.headers.get("cookie");
 
   if (!cookies) {
@@ -105,7 +105,7 @@ async function extractTokensFromRequest(request: Request): Promise<SupabaseToken
   };
 }
 
-async function setSupabaseTokens(tokens: SupabaseTokens) {
+export async function setSupabaseTokens(tokens: SupabaseTokens) {
   const { data, error } = await supabase.auth.getSession();
 
   if (error) {
@@ -139,10 +139,3 @@ supabase.auth.onAuthStateChange((event, session) => {
     sessionStore.isDealer = session?.user.user_metadata.isDealer;
   }
 });
-
-export default {
-  getSession,
-  getUserId,
-  logout,
-  login
-};

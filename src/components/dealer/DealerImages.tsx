@@ -8,18 +8,18 @@ import EmptyContent from "~/components/ui/EmptyContent";
 import LoadingSpinner from "~/components/ui/icons/LoadingSpinner";
 import Toast from "~/components/ui/Toast";
 import sessionStore from "~/lib/stores/session-store";
-import storageService from "~/lib/supabase/storage-service";
+import { deleteDealerImage, getDealerImages, saveDealerImage } from "~/lib/supabase/storage-service";
 
 export default function DealerImages(props: { companyName: string }) {
   const params = useParams();
   const [toastText, setToastText] = createSignal("");
   const [zoomIndex, setZoomIndex] = createSignal(0);
   const [deleteImageUrl, setDeleteImageUrl] = createSignal("");
-  const [images, { mutate }] = createResource(async () => await storageService.getDealerImages(params.id), { initialValue: [] });
+  const [images, { mutate }] = createResource(async () => await getDealerImages(params.id), { initialValue: [] });
 
   async function saveImage(image: File) {
     setToastText("Speichere Bild ...");
-    const imageUrl = await storageService.saveDealerImage(image);
+    const imageUrl = await saveDealerImage(image);
 
     if (imageUrl) {
       mutate((old) => [...old, imageUrl]);
@@ -31,7 +31,7 @@ export default function DealerImages(props: { companyName: string }) {
   async function deleteImage() {
     setToastText("Lösche Bild ...");
     const filename = deleteImageUrl().split("/").pop() || "";
-    await storageService.deleteDealerImage(filename);
+    await deleteDealerImage(filename);
     mutate((old) => old.filter((url) => url !== deleteImageUrl()));
     setToastText("");
   }

@@ -1,10 +1,10 @@
 import { munichPosition, type Position, toPostGisPoint } from "~/lib/geo/geo.types";
-import authService from "~/lib/supabase/auth-service";
+import { getUserId } from "~/lib/supabase/auth-service";
 import type { Account, AccountInsert, AccountUpdate } from "./public-types";
 import { supabase, translateError } from "./supabase-client";
 
-async function getDefaultCategory(): Promise<number> {
-  const userId = await authService.getUserId();
+export async function getDefaultCategory(): Promise<number> {
+  const userId = await getUserId();
 
   if (!userId) return -1;
 
@@ -18,8 +18,8 @@ async function getDefaultCategory(): Promise<number> {
   return data.default_category || -1;
 }
 
-async function getAccount(): Promise<Account | undefined> {
-  const userId = await authService.getUserId();
+export async function getAccount(): Promise<Account | undefined> {
+  const userId = await getUserId();
 
   if (!userId) return;
 
@@ -33,9 +33,9 @@ async function getAccount(): Promise<Account | undefined> {
   return data;
 }
 
-async function updateAccount(update: AccountUpdate): Promise<string | undefined> {
+export async function updateAccount(update: AccountUpdate): Promise<string | undefined> {
   console.log("Update account:", update);
-  const id = await authService.getUserId();
+  const id = await getUserId();
 
   if (!id) {
     console.log("Can't update account -> unknown user id");
@@ -53,7 +53,7 @@ async function updateAccount(update: AccountUpdate): Promise<string | undefined>
   }
 }
 
-async function getLocation(street: string, houseNumber: string, city: string, zip: string): Promise<Position | null> {
+export async function getLocation(street: string, houseNumber: string, city: string, zip: string): Promise<Position | null> {
   const query = `format=json&street=${houseNumber} ${street}&city=${city}&postalcode=${zip}`;
   const response = await fetch(`https://nominatim.openstreetmap.org/search?${query}`);
   const geoInformation = await response.json();
@@ -69,7 +69,7 @@ async function getLocation(street: string, houseNumber: string, city: string, zi
   };
 }
 
-async function register(account: AccountInsert): Promise<string | undefined> {
+export async function saveAccount(account: AccountInsert): Promise<string | undefined> {
   let position: Position = munichPosition;
 
   if (account.is_dealer) {
@@ -111,8 +111,8 @@ async function register(account: AccountInsert): Promise<string | undefined> {
   }
 }
 
-async function getUsername(userId?: string): Promise<string> {
-  userId = userId ? userId : await authService.getUserId();
+export async function getUsername(userId?: string): Promise<string> {
+  userId = userId ? userId : await getUserId();
 
   if (!userId) {
     return "Anonymous";
@@ -127,11 +127,3 @@ async function getUsername(userId?: string): Promise<string> {
 
   return data.username;
 }
-
-export default {
-  getAccount,
-  getDefaultCategory,
-  getUsername,
-  updateAccount,
-  register
-};

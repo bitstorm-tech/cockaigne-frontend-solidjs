@@ -9,10 +9,10 @@ import Checkbox from "~/components/ui/Checkbox";
 import ImagePicker from "~/components/ui/ImagePicker";
 import Input from "~/components/ui/Input";
 import Textarea from "~/components/ui/Textarea";
-import authService from "~/lib/supabase/auth-service";
-import dealService from "~/lib/supabase/deal-service";
+import { getUserId } from "~/lib/supabase/auth-service";
+import { getDeal, newDeal, upsertDeal } from "~/lib/supabase/deal-service";
 import { DealUpsert } from "~/lib/supabase/public-types";
-import storageService from "~/lib/supabase/storage-service";
+import { saveDealImages } from "~/lib/supabase/storage-service";
 import dateTimeUtils, { getDateAsIsoString, getDateTimeAsIsoString } from "~/lib/utils/date-time.utils";
 
 const runtimes = {
@@ -24,7 +24,7 @@ const runtimes = {
 export default function EditDeal() {
   const params = useParams();
   const navigate = useNavigate();
-  const [deal, setDeal] = createStore<DealUpsert>(dealService.newDeal());
+  const [deal, setDeal] = createStore<DealUpsert>(newDeal());
   const [disabled, setDisabled] = createSignal(false);
   const [disabledSave, setDisabledSave] = createSignal(false);
   const [individuallyTime, setIndividuallyTime] = createSignal(false);
@@ -36,7 +36,7 @@ export default function EditDeal() {
   const costs = () => 4.99 * getDurationInDays();
 
   onMount(async () => {
-    setDeal(params.id ? (await dealService.getDeal(params.id)) || dealService.newDeal() : dealService.newDeal());
+    setDeal(params.id ? (await getDeal(params.id)) || newDeal() : newDeal());
     setIndividuallyTime(deal.duration > 72);
     setImagePreviewsUrls(deal.imageUrls || []);
     setIndividualEndDate(
@@ -78,18 +78,18 @@ export default function EditDeal() {
     setDeal("duration", getDurationInDays() * 24);
     setDeal("start", dateTimeUtils.formatDateWithTimeZone(deal.start));
 
-    const dealerId = await authService.getUserId();
+    const dealerId = await getUserId();
     if (dealerId) {
       setDeal("dealer_id", dealerId);
     }
 
-    const dealId = await dealService.upsertDeal(deal, createTemplate());
+    const dealId = await upsertDeal(deal, createTemplate());
 
     if (!dealId) {
       return;
     }
 
-    await storageService.saveDealImages(images, dealId);
+    await saveDealImages(images, dealId);
 
     navigate("/");
   }

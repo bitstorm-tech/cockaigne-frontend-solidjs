@@ -4,7 +4,7 @@ import LoadingSpinner from "~/components/ui/icons/LoadingSpinner";
 import Modal from "~/components/ui/Modal";
 import Textarea from "~/components/ui/Textarea";
 import { ActiveDeal } from "~/lib/supabase/public-types";
-import reportService from "~/lib/supabase/report-service";
+import { getReport, saveReport } from "~/lib/supabase/report-service";
 
 export const [showReportDealModal, setShowReportDealModal] = createSignal(false);
 
@@ -14,7 +14,7 @@ export default function ReportDealModal(props: { deal: ActiveDeal }) {
   const [alreadyReported, setAlreadyReported] = createSignal(false);
 
   async function open() {
-    const report = await reportService.getReport(props.deal.id);
+    const report = await getReport(props.deal.id);
     if (report) {
       setReason(report.reason);
       setAlreadyReported(true);
@@ -23,7 +23,7 @@ export default function ReportDealModal(props: { deal: ActiveDeal }) {
   }
 
   async function save() {
-    reportService.saveReport(props.deal.id, reason()).then();
+    saveReport(props.deal.id, reason()).then();
     setShowReportDealModal(false);
   }
 

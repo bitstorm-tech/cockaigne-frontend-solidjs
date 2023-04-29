@@ -1,9 +1,9 @@
 import { createResource, JSXElement, Suspense } from "solid-js";
 import ProfileImage from "~/components/user/ProfileImage";
-import dealerService from "~/lib/supabase/dealer-service";
+import { getDealer } from "~/lib/supabase/dealer-service";
 
 export default function DealerHeader(props: { id: string; children: JSXElement }) {
-  const [dealer] = createResource(async () => await dealerService.getDealer(props.id));
+  const [dealer] = createResource(async () => await getDealer(props.id));
 
   return (
     <div class="flex flex-col">
