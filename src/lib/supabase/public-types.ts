@@ -4,7 +4,7 @@ export type NonNullableFields<T> = {
   [P in keyof T]: NonNullable<T[P]>;
 };
 
-export type Account = Database["public"]["Tables"]["accounts"]["Row"] & { profileImageUrl?: string };
+export type Account = Database["public"]["Tables"]["accounts"]["Row"];
 export type AccountUpdate = Database["public"]["Tables"]["accounts"]["Update"];
 export type AccountInsert = Database["public"]["Tables"]["accounts"]["Insert"] & { password: string };
 export type ActiveDeal = Required<NonNullableFields<Database["public"]["Views"]["active_deals_view"]["Row"]>> & {

@@ -1,4 +1,5 @@
 import { createResource, createSignal, onMount } from "solid-js";
+import EmptyContent from "~/components/ui/EmptyContent";
 import UserDealList from "~/components/user/UserDealList";
 import { setCurrentPage } from "~/lib/stores/navigation-store";
 import { getTopDeals } from "~/lib/supabase/deal-service";
@@ -17,6 +18,8 @@ export default function Top() {
     setCurrentPage("top");
   });
 
+  const emptyContent = <EmptyContent>In deiner Umgebung gibt es leider noch keine Top-Deals :(</EmptyContent>;
+
   return (
     <>
       <p class="my-4 text-center">TOP-Deals in deiner Nähe</p>
@@ -34,7 +37,7 @@ export default function Top() {
           Top 100
         </button>
       </div>
-      <UserDealList deals={deals()!} />
+      <UserDealList deals={deals()!} emptyContent={emptyContent} />
     </>
   );
 }

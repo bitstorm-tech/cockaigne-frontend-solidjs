@@ -69,12 +69,12 @@ export async function getDealerImages(dealerId: string): Promise<string[]> {
   return [];
 }
 
-export async function getProfileImage(id?: string, isDealer = false): Promise<string> {
-  const userId = id ? id : await getUserId();
+export async function getProfileImage(params: { id?: string; isDealer?: boolean } = {}): Promise<string> {
+  const userId = params.id || (await getUserId());
 
   if (!userId) {
     console.error("Can't get profile image -> unknown user -> return default image");
-    return isDealer ? DEFAULT_DEALER_PROFILE_IMAGE_URL : DEFAULT_USER_PROFILE_IMAGE_URL;
+    return params.isDealer ? DEFAULT_DEALER_PROFILE_IMAGE_URL : DEFAULT_USER_PROFILE_IMAGE_URL;
   }
 
   const { data } = await supabase.storage.from(BUCKET_PROFILE_IMAGES).list(userId);
@@ -84,7 +84,7 @@ export async function getProfileImage(id?: string, isDealer = false): Promise<st
     return supabase.storage.from(BUCKET_PROFILE_IMAGES).getPublicUrl(userId + "/" + filename).data.publicUrl;
   }
 
-  return isDealer ? DEFAULT_DEALER_PROFILE_IMAGE_URL : DEFAULT_USER_PROFILE_IMAGE_URL;
+  return params.isDealer ? DEFAULT_DEALER_PROFILE_IMAGE_URL : DEFAULT_USER_PROFILE_IMAGE_URL;
 }
 
 export async function getDealImages(dealId: string, dealerId: string): Promise<string[]> {

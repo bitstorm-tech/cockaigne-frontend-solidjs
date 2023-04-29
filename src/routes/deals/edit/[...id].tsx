@@ -9,6 +9,7 @@ import Checkbox from "~/components/ui/Checkbox";
 import ImagePicker from "~/components/ui/ImagePicker";
 import Input from "~/components/ui/Input";
 import Textarea from "~/components/ui/Textarea";
+import { getDefaultCategory } from "~/lib/supabase/account-service";
 import { getUserId } from "~/lib/supabase/auth-service";
 import { getDeal, newDeal, upsertDeal } from "~/lib/supabase/deal-service";
 import { DealUpsert } from "~/lib/supabase/public-types";
@@ -24,7 +25,7 @@ const runtimes = {
 export default function EditDeal() {
   const params = useParams();
   const navigate = useNavigate();
-  const [deal, setDeal] = createStore<DealUpsert>(newDeal());
+  const [deal, setDeal] = createStore<DealUpsert>(newDeal(0));
   const [disabled, setDisabled] = createSignal(false);
   const [disabledSave, setDisabledSave] = createSignal(false);
   const [individuallyTime, setIndividuallyTime] = createSignal(false);
@@ -36,7 +37,8 @@ export default function EditDeal() {
   const costs = () => 4.99 * getDurationInDays();
 
   onMount(async () => {
-    setDeal(params.id ? (await getDeal(params.id)) || newDeal() : newDeal());
+    const defaultCategory = await getDefaultCategory();
+    setDeal(params.id ? (await getDeal(params.id)) || newDeal(defaultCategory) : newDeal(defaultCategory));
     setIndividuallyTime(deal.duration > 72);
     setImagePreviewsUrls(deal.imageUrls || []);
     setIndividualEndDate(

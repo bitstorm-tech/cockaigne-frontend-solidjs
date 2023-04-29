@@ -3,6 +3,25 @@ import { getUserId } from "~/lib/supabase/auth-service";
 import type { Account, AccountInsert, AccountUpdate } from "./public-types";
 import { supabase, translateError } from "./supabase-client";
 
+export const EMPTY_ACCOUNT: Account = {
+  age: 0,
+  city: "",
+  default_category: 0,
+  email: "",
+  gender: "",
+  house_number: "",
+  id: "",
+  is_dealer: false,
+  location: undefined,
+  phone: "",
+  search_radius: 0,
+  street: "",
+  tax_id: "",
+  use_current_location: false,
+  username: "",
+  zip: 0
+};
+
 export async function getDefaultCategory(): Promise<number> {
   const userId = await getUserId();
 
@@ -115,14 +134,14 @@ export async function getUsername(userId?: string): Promise<string> {
   userId = userId ? userId : await getUserId();
 
   if (!userId) {
-    return "Anonymous";
+    return "";
   }
 
   const { data, error } = await supabase.from("accounts").select("username").eq("id", userId).single();
 
   if (error) {
     console.error("Can't get username:", error.message);
-    return "Anonymous";
+    return "";
   }
 
   return data.username;

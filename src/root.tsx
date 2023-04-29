@@ -2,12 +2,9 @@
 import { Body, ErrorBoundary, FileRoutes, Head, Html, Link, Meta, Routes, Scripts, Title } from "solid-start";
 import Footer from "~/components/navigation/Footer";
 import Header from "~/components/navigation/Header";
-import { loadAccount } from "~/lib/stores/account-store";
 import "./root.css";
 
 export default function Root() {
-  loadAccount().then();
-
   return (
     <Html lang="en" data-theme="dark">
       <Head>

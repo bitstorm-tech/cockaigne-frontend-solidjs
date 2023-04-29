@@ -5,11 +5,12 @@ import DealsBadge from "~/components/user/DealsBadge";
 import FavoriteDealerBadge from "~/components/user/FavoriteDealerBadge";
 import HotsBadge from "~/components/user/HotsBadge";
 import ProfileImage from "~/components/user/ProfileImage";
-import { account } from "~/lib/stores/account-store";
+import { getUsername } from "~/lib/supabase/account-service";
 import { getCurrentAddress } from "~/lib/supabase/location-service";
 
 export default function UserHeader() {
   const [address] = createResource(getCurrentAddress);
+  const [username] = createResource(() => getUsername(), { initialValue: "" });
 
   return (
     <div class="flex justify-between text-[#dbdce6]">
@@ -20,7 +21,7 @@ export default function UserHeader() {
             <HotsBadge number={2} />
             <FavoriteDealerBadge number={3} />
           </div>
-          <span class="text-2xl">{account.username}</span>
+          <span class="text-2xl">{username()}</span>
           <span class="flex flex-col gap-2 text-sm">
             <b>Dein Standort</b>
             <span class="flex gap-1">

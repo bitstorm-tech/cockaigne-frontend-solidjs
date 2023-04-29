@@ -1,13 +1,14 @@
-import { createSignal, Show } from "solid-js";
+import { createResource, createSignal, Show } from "solid-js";
 import AddressSettings from "~/components/settings/AddressSettings";
 import CategorySelect from "~/components/ui/CategorySelect";
 import ImagePicker from "~/components/ui/ImagePicker";
 import Input from "~/components/ui/Input";
-import { profileImageUrl } from "~/lib/stores/account-store";
+import { getProfileImage } from "~/lib/supabase/storage-service";
 import { accountCopy, setAccountCopy, setNewProfileImage } from "~/routes/settings";
 
 export default function DealerSettings() {
   const [tabIndex, setTabIndex] = createSignal(0);
+  const [profileImageUrl] = createResource(() => getProfileImage({ isDealer: true }), { initialValue: "" });
 
   return (
     <>

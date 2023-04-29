@@ -1,12 +1,13 @@
-import { createSignal } from "solid-js";
+import { createResource, createSignal } from "solid-js";
 import Button from "~/components/ui/Button";
 import ImagePicker from "~/components/ui/ImagePicker";
 import Input from "~/components/ui/Input";
-import { profileImageUrl } from "~/lib/stores/account-store";
+import { getProfileImage } from "~/lib/supabase/storage-service";
 import { accountCopy, setAccountCopy, setNewProfileImage } from "~/routes/settings";
 
 export default function UserSettings() {
   const [tabIndex, setTabIndex] = createSignal(0);
+  const [profileImageUrl] = createResource(() => getProfileImage(), { initialValue: "" });
 
   async function changePassword() {}
 

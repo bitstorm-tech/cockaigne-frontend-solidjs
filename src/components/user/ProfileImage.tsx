@@ -6,7 +6,7 @@ export default function ProfileImage(props: { id?: string; size?: number; isDeal
   props = mergeProps({ size: 6 }, props);
   const style = `width: ${props.size}rem; height: ${props.size}rem`;
 
-  const [profileImageUrl] = createResource(async () => await getProfileImage(props.id, props.isDealer));
+  const [profileImageUrl] = createResource(async () => await getProfileImage({ isDealer: props.isDealer }));
 
   return (
     <div class="avatar cursor-pointer" classList={{ invisible: menuOpen() }}>

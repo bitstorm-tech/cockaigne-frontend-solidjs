@@ -1,7 +1,6 @@
 import { jwtVerify } from "jose";
 import { isServer } from "solid-js/web";
 import { useServerContext } from "solid-start";
-import { loadAccount, setAccount } from "~/lib/stores/account-store";
 import sessionStore from "~/lib/stores/session-store";
 import { supabase, translateError } from "~/lib/supabase/supabase-client";
 
@@ -16,7 +15,10 @@ export async function getSession(): Promise<Session> {
   const { error, data } = await supabase.auth.getSession();
 
   if (error || !data.session) {
-    console.error("Can't get session:", error?.message);
+    if (error) {
+      console.error("Can't get session:", error?.message);
+    }
+
     return {
       isDealer: false
     };
@@ -38,13 +40,10 @@ export async function login(email: string, password: string): Promise<string | u
     console.error("Can't login:", error.message);
     return translateError(error);
   }
-
-  loadAccount().then();
 }
 
 export async function logout() {
   const { error } = await supabase.auth.signOut();
-  setAccount("username", "");
 
   if (error) {
     console.error("Can't logout:", error.message);
@@ -52,29 +51,29 @@ export async function logout() {
 }
 
 export async function getUserId(): Promise<string | undefined> {
-  if (isServer) {
-    const ctx = useServerContext();
-
-    if (!ctx.request) {
-      return;
-    }
-
-    const tokens = await extractTokensFromRequest(ctx.request);
-
-    if (tokens) {
-      await setSupabaseTokens(tokens);
-    }
-
-    try {
-      const { payload } = await jwtVerify(tokens?.accessToken || "", JWT_KEY);
-      return payload.sub;
-    } catch {
-      return;
-    }
+  if (!isServer) {
+    const session = await getSession();
+    return session.userId;
   }
 
-  const session = await getSession();
-  return session.userId;
+  const ctx = useServerContext();
+
+  if (!ctx.request) {
+    return;
+  }
+
+  const tokens = await extractTokensFromRequest(ctx.request);
+
+  if (tokens) {
+    await setSupabaseTokens(tokens);
+  }
+
+  try {
+    const { payload } = await jwtVerify(tokens?.accessToken || "", JWT_KEY);
+    return payload.sub;
+  } catch {
+    return;
+  }
 }
 
 type SupabaseTokens = {

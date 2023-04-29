@@ -11,7 +11,7 @@ export default function templates() {
           ...template,
           likes: 0,
           username: "",
-          location: undefined,
+          location: {},
           start_time: ""
         };
         return newTemplate;

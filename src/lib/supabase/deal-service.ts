@@ -1,7 +1,6 @@
 import remove from "lodash/remove";
 import { Extent } from "ol/extent";
 import { Position } from "~/lib/geo/geo.types";
-import { account } from "~/lib/stores/account-store";
 import { getUserId } from "~/lib/supabase/auth-service";
 import { getDealImages } from "~/lib/supabase/storage-service";
 import dateTimeUtils, { getDateTimeAsIsoString } from "~/lib/utils/date-time.utils";
@@ -10,12 +9,12 @@ import type {
   ActiveDeal,
   Deal,
   DealUpsert,
+  FutureActivePastDeal,
   FutureDeal,
   GetActiveDealsWithinExtentFunctionArguments,
   Like,
   PastDeal
 } from "./public-types";
-import { DealerRatingWithUsername } from "./public-types";
 import { supabase } from "./supabase-client";
 
 export interface DealFilter {
@@ -45,7 +44,7 @@ export async function getDeal(id: string): Promise<Deal | undefined> {
 }
 
 export async function getActiveDealsByDealer(dealerIds?: string | string[]): Promise<ActiveDeal[]> {
-  const ids = dealerIds ? (Array.isArray(dealerIds) ? dealerIds : [dealerIds]) : [await sgetUserId()];
+  const ids = dealerIds ? (Array.isArray(dealerIds) ? dealerIds : [dealerIds]) : [await getUserId()];
   const { data, error } = await supabase.from("active_deals_view").select().in("dealer_id", ids);
 
   if (error) {
@@ -240,7 +239,7 @@ export async function getHotDeals(): Promise<ActiveDeal[]> {
   return enrichDealWithImageUrls(activeDealsResult.data);
 }
 
-export async function enrichDealWithImageUrls(deals: ActiveDeal[]): Promise<ActiveDeal[]> {
+export async function enrichDealWithImageUrls(deals: FutureActivePastDeal[]): Promise<FutureActivePastDeal[]> {
   for (const deal of deals) {
     if (!deal.id || !deal.dealer_id) {
       console.error("Can't enrich deal with image URLs -> either deal or dealer ID unknown");
@@ -305,7 +304,7 @@ export async function getLikes(): Promise<Like[]> {
   return data;
 }
 
-export function newDeal(): DealUpsert {
+export function newDeal(defaultCategory: number): DealUpsert {
   return {
     dealer_id: "",
     start: getDateTimeAsIsoString(new Date(), 60),
@@ -313,16 +312,6 @@ export function newDeal(): DealUpsert {
     description: "",
     duration: 24,
     template: false,
-    category_id: account.default_category || 1
+    category_id: defaultCategory
   };
-}
-
-export async function getRatingsForDealer(dealerId: string): Promise<DealerRatingWithUsername[]> {
-  const { data } = await supabase.from("dealer_ratings_view").select().eq("dealer_id", dealerId);
-
-  if (!data) {
-    return [];
-  }
-
-  return data;
 }
