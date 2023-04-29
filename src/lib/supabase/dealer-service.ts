@@ -38,7 +38,7 @@ export async function isFavoriteDealer(dealerId: string): Promise<boolean> {
     .eq("dealer_id", dealerId);
 
   if (error) {
-    console.error("Can't check if dealer is favorite:", error);
+    console.error("Can't check if dealer is favorite:", error.message);
     return false;
   }
 

@@ -9,7 +9,7 @@ export async function useCurrentLocation(): Promise<boolean> {
   const { error, data } = await supabase.from("accounts").select("use_current_location").eq("id", userId).single();
 
   if (error) {
-    console.log("Can't get useCurrentLocation:", error);
+    console.error("Can't get useCurrentLocation:", error.message);
     return false;
   }
 
@@ -21,7 +21,7 @@ export async function saveUseCurrentLocation(useCurrentLocation: boolean) {
   const { error } = await supabase.from("accounts").update({ use_current_location: useCurrentLocation }).eq("id", userId);
 
   if (error) {
-    console.log("Can't save use current location:", error);
+    console.error("Can't save use current location:", error.message);
   }
 }
 
@@ -30,7 +30,7 @@ export async function getLocation(): Promise<Position> {
   const { error, data } = await supabase.from("accounts").select("location").eq("id", userId).single();
 
   if (error || !data.location) {
-    console.log("Can't get location:", error);
+    console.error("Can't get location:", error?.message);
     return munichPosition;
   }
 
@@ -54,14 +54,14 @@ export async function createFilterByCurrentLocationAndSelectedCategories(): Prom
   const { error, data } = await supabase.from("accounts").select("search_radius, location").eq("id", userId).single();
 
   if (error) {
-    console.log("Can't create filter by current location:", error);
+    console.error("Can't create filter by current location:", error.message);
     return {};
   }
 
   const result2 = await supabase.from("selected_categories").select("category_id").eq("user_id", userId);
 
   if (result2.error) {
-    console.log("Can't create filter by selected categories:", result2.error);
+    console.error("Can't create filter by selected categories:", result2.error.message);
     return {};
   }
 
@@ -81,14 +81,14 @@ export async function getSearchRadius(): Promise<number> {
   const userId = await getUserId();
 
   if (!userId) {
-    console.log("Can't get search radius -> unknown user");
+    console.error("Can't get search radius -> unknown user");
     return 500;
   }
 
   const { error, data } = await supabase.from("accounts").select("search_radius").eq("id", userId).single();
 
   if (!data) {
-    console.log("Can't get search radius:", error);
+    console.error("Can't get search radius:", error?.message);
     return 500;
   }
 
