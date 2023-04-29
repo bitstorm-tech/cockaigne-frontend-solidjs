@@ -1,3 +1,4 @@
+import { debounce } from "lodash";
 import { createResource, createSignal, For, onMount, Suspense } from "solid-js";
 import Button from "~/components/ui/Button";
 import Checkbox from "~/components/ui/Checkbox";
@@ -7,6 +8,8 @@ import { getCategories } from "~/lib/supabase/category-service";
 import { getSearchRadius, saveSearchRadius } from "~/lib/supabase/location-service";
 
 export const [showDealFilterModal, setShowDealFilterModal] = createSignal(false);
+
+const saveSearchRadiusDebounce = debounce((radius: number) => saveSearchRadius(radius).then(), 2000);
 
 export default function DealFilterModal() {
   const [searchRadius, setSearchRadius] = createSignal(0);
@@ -19,7 +22,7 @@ export default function DealFilterModal() {
   });
 
   function onSearchRadiusChange(radius: number) {
-    saveSearchRadius(radius).then();
+    saveSearchRadiusDebounce(radius);
     setSearchRadius(radius);
   }
 

@@ -31,7 +31,7 @@ export async function getDeal(id: string): Promise<Deal | undefined> {
   const { data, error } = await supabase.from("deals").select().eq("id", id).single();
 
   if (error) {
-    console.error("Can't get deal:", error);
+    console.error("Can't get deal:", error.message);
     return;
   }
 
@@ -49,7 +49,7 @@ export async function getActiveDealsByDealer(dealerIds?: string | string[]): Pro
   const { data, error } = await supabase.from("active_deals_view").select().in("dealer_id", ids);
 
   if (error) {
-    console.error("Can't get active deals:", error);
+    console.error("Can't get active deals:", error.message);
     return [];
   }
 
@@ -64,7 +64,7 @@ export async function getPastDealsByDealer(): Promise<PastDeal[]> {
   const { data, error } = await supabase.from("past_deals_view").select().eq("dealer_id", dealerId);
 
   if (error) {
-    console.error("Can't get past deals:", error);
+    console.error("Can't get past deals:", error.message);
     return [];
   }
 
@@ -79,7 +79,7 @@ export async function getFutureDealsByDealer(): Promise<FutureDeal[]> {
   const { data, error } = await supabase.from("future_deals_view").select().eq("dealer_id", dealerId);
 
   if (error) {
-    console.error("Can't get future deals:", error);
+    console.error("Can't get future deals:", error.message);
     return [];
   }
 
@@ -92,7 +92,7 @@ export async function getTemplatesByDealer(): Promise<Deal[]> {
   const { data, error } = await supabase.from("deals").select().eq("dealer_id", dealerId).eq("template", true);
 
   if (error) {
-    console.log("Can't get templates:", error);
+    console.error("Can't get templates:", error.message);
     return [];
   }
 
@@ -110,7 +110,7 @@ export async function upsertDeal(deal: DealUpsert, alsoCreateTemplate = false): 
   const resultUpsertDeal = await supabase.from("deals").upsert(_deal).select("id").single();
 
   if (resultUpsertDeal.error) {
-    console.log("Can't upsert deal:", resultUpsertDeal.error);
+    console.error("Can't upsert deal:", resultUpsertDeal.error.message);
     return;
   }
 
@@ -122,7 +122,7 @@ export async function upsertDeal(deal: DealUpsert, alsoCreateTemplate = false): 
   const resultUpsertTemplate = await supabase.from("deals").insert(deal).select("id").single();
 
   if (resultUpsertTemplate.error) {
-    console.log("Can't insert deal template:", resultUpsertTemplate.error);
+    console.error("Can't insert deal template:", resultUpsertTemplate.error.message);
     return resultUpsertDeal.data.id;
   }
 
@@ -134,7 +134,7 @@ export async function deleteDeal(dealId: string): Promise<string | undefined> {
   const { error } = await supabase.from("deals").delete().eq("id", dealId).eq("dealer_id", dealerId);
 
   if (error) {
-    console.log("Can't delete deal:", error);
+    console.error("Can't delete deal:", error.message);
     return error.message;
   }
 }
@@ -158,7 +158,7 @@ export async function getDealsByFilter(filter: DealFilter): Promise<ActiveDeal[]
   const extent = createExtentFromFilter(filter);
 
   if (!extent) {
-    console.log("Can't get deals by filter -> no valid extent");
+    console.error("Can't get deals by filter -> no valid extent");
     return [];
   }
 
@@ -177,7 +177,7 @@ export async function getDealsByFilter(filter: DealFilter): Promise<ActiveDeal[]
   const { data, error } = await query;
 
   if (error) {
-    console.error("Can't get deals by filter:", error);
+    console.error("Can't get deals by filter:", error.message);
     return [];
   }
 
@@ -194,14 +194,14 @@ export async function toggleHotDeal(dealId: string): Promise<ActiveDeal | null> 
 
   const userId = await getUserId();
   if (!userId) {
-    console.log("Can't toggle hot deal, unknown user");
+    console.error("Can't toggle hot deal, unknown user");
     return null;
   }
   await supabase.from("hot_deals").insert({ user_id: userId, deal_id: dealId });
   const result = await supabase.from("active_deals_view").select().eq("id", dealId).single();
 
   if (result.error) {
-    console.log("Can't get hot deal:", result.error);
+    console.error("Can't get hot deal:", result.error.message);
     return null;
   }
 
@@ -220,7 +220,7 @@ export async function getHotDeals(): Promise<ActiveDeal[]> {
   const hotDealsResult = await supabase.from("hot_deals").select().eq("user_id", userId);
 
   if (hotDealsResult.error) {
-    console.log("Can't get hot deals:", hotDealsResult.error);
+    console.error("Can't get hot deals:", hotDealsResult.error.message);
     return [];
   }
 
@@ -233,7 +233,7 @@ export async function getHotDeals(): Promise<ActiveDeal[]> {
     );
 
   if (activeDealsResult.error) {
-    console.log("Can't get hot deals:", activeDealsResult.error);
+    console.error("Can't get hot deals:", activeDealsResult.error.message);
     return [];
   }
 
@@ -243,7 +243,7 @@ export async function getHotDeals(): Promise<ActiveDeal[]> {
 export async function enrichDealWithImageUrls(deals: ActiveDeal[]): Promise<ActiveDeal[]> {
   for (const deal of deals) {
     if (!deal.id || !deal.dealer_id) {
-      console.log("Can't enrich deal with image URLs -> either deal or dealer ID unknown");
+      console.error("Can't enrich deal with image URLs -> either deal or dealer ID unknown");
       continue;
     }
     deal.imageUrls = await getDealImages(deal.id, deal.dealer_id);
@@ -271,7 +271,7 @@ export async function toggleLike(dealId: string) {
     .eq("deal_id", dealId);
 
   if (error) {
-    console.log("Can't toggle like:", error);
+    console.error("Can't toggle like:", error.message);
     return;
   }
 
@@ -286,7 +286,7 @@ export async function toggleLike(dealId: string) {
   const result = await query;
 
   if (result.error) {
-    console.log("Can't toggle like:", result.error);
+    console.error("Can't toggle like:", result.error.message);
   }
 }
 
@@ -298,7 +298,7 @@ export async function getLikes(): Promise<Like[]> {
   const { data, error } = await supabase.from("likes").select().eq("user_id", userId);
 
   if (error) {
-    console.log("Can't get likes:", error);
+    console.error("Can't get likes:", error.message);
     return [];
   }
 

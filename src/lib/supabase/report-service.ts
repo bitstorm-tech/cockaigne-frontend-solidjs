@@ -10,7 +10,7 @@ export async function getReport(dealId: string): Promise<ReportedDeal | undefine
   const { data, error } = await supabase.from("reported_deals").select().eq("deal_id", dealId).eq("reporter_id", userId).single();
 
   if (error) {
-    console.log("Can't get report:", error.message);
+    console.error("Can't get report:", error.message);
     return;
   }
 

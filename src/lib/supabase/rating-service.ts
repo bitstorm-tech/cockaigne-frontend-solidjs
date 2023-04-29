@@ -15,7 +15,7 @@ export async function saveRating(rating: DealerRatingInsert): Promise<DealerRati
   const { error, data } = await supabase.from("dealer_ratings").insert(rating);
 
   if (error) {
-    console.error("Can't save rating:", error);
+    console.error("Can't save rating:", error.message);
     return;
   }
 
@@ -27,7 +27,7 @@ export async function saveRating(rating: DealerRatingInsert): Promise<DealerRati
     .single();
 
   if (result.error) {
-    console.log("Can't get dealer rating after save:", result.error);
+    console.error("Can't get dealer rating after save:", result.error.message);
     return;
   }
 

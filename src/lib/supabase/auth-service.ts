@@ -16,7 +16,7 @@ export async function getSession(): Promise<Session> {
   const { error, data } = await supabase.auth.getSession();
 
   if (error || !data.session) {
-    console.log("Can't get session:", error);
+    console.error("Can't get session:", error?.message);
     return {
       isDealer: false
     };
@@ -35,7 +35,7 @@ export async function login(email: string, password: string): Promise<string | u
   });
 
   if (error) {
-    console.log("Can't login:", error);
+    console.error("Can't login:", error.message);
     return translateError(error);
   }
 
@@ -47,7 +47,7 @@ export async function logout() {
   setAccount("username", "");
 
   if (error) {
-    console.log("Can't logout:", error);
+    console.error("Can't logout:", error.message);
   }
 }
 
@@ -109,7 +109,7 @@ export async function setSupabaseTokens(tokens: SupabaseTokens) {
   const { data, error } = await supabase.auth.getSession();
 
   if (error) {
-    console.log("Can't set supabase session in server:", error);
+    console.error("Can't set supabase session in server:", error.message);
     return;
   }
 

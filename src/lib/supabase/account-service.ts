@@ -11,7 +11,7 @@ export async function getDefaultCategory(): Promise<number> {
   const { data, error } = await supabase.from("accounts").select("default_category").eq("id", userId).single();
 
   if (error) {
-    console.error("Can't get default category:", error);
+    console.error("Can't get default category:", error.message);
     return -1;
   }
 
@@ -26,7 +26,7 @@ export async function getAccount(): Promise<Account | undefined> {
   const { data, error } = await supabase.from("accounts").select().eq("id", userId).single();
 
   if (error) {
-    console.error("Can't get account:", error);
+    console.error("Can't get account:", error.message);
     return;
   }
 
@@ -38,14 +38,14 @@ export async function updateAccount(update: AccountUpdate): Promise<string | und
   const id = await getUserId();
 
   if (!id) {
-    console.log("Can't update account -> unknown user id");
+    console.error("Can't update account -> unknown user id");
     return;
   }
 
   const { error } = await supabase.from("accounts").update(update).eq("id", id);
 
   if (error) {
-    console.log("Can't update account:", error);
+    console.error("Can't update account:", error.message);
     if (error.code === "23505") {
       return "Benutzername bereits vergeben";
     }
@@ -121,7 +121,7 @@ export async function getUsername(userId?: string): Promise<string> {
   const { data, error } = await supabase.from("accounts").select("username").eq("id", userId).single();
 
   if (error) {
-    console.log("Can't get username:", error);
+    console.error("Can't get username:", error.message);
     return "Anonymous";
   }
 

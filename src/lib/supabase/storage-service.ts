@@ -23,14 +23,14 @@ export async function saveImage(file: File, bucket: string, filename: string, fo
     return data.publicUrl;
   }
 
-  console.log("Can't save image:", error);
+  console.error("Can't save image:", error.message);
 }
 
 export async function saveProfileImage(image: File): Promise<string | undefined> {
   const userId = await getUserId();
 
   if (!userId) {
-    console.log("Can't save profile image -> unknown user");
+    console.error("Can't save profile image -> unknown user");
     return;
   }
 
@@ -73,7 +73,7 @@ export async function getProfileImage(id?: string, isDealer = false): Promise<st
   const userId = id ? id : await getUserId();
 
   if (!userId) {
-    console.log("Can't get profile image -> unknown user -> return default image");
+    console.error("Can't get profile image -> unknown user -> return default image");
     return isDealer ? DEFAULT_DEALER_PROFILE_IMAGE_URL : DEFAULT_USER_PROFILE_IMAGE_URL;
   }
 
@@ -92,7 +92,7 @@ export async function getDealImages(dealId: string, dealerId: string): Promise<s
   const { data, error } = await supabase.storage.from(BUCKET_DEAL_IMAGES).list(path);
 
   if (error) {
-    console.log("Can't get deal images:", error);
+    console.error("Can't get deal images:", error.message);
     return [];
   }
 
@@ -117,7 +117,7 @@ export async function deleteDealImages(dealId: string) {
   const { data, error } = await supabase.storage.from(BUCKET_DEAL_IMAGES).list(path);
 
   if (error) {
-    console.log("Can't delete deal images:", error);
+    console.error("Can't delete deal images:", error.message);
   }
 
   const filesToDelete = data?.map((fileObject) => `${path}/${fileObject.name}`) || [];
