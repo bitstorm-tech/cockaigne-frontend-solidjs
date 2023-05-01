@@ -1,11 +1,10 @@
 import { AuthError, createClient } from "@supabase/supabase-js";
-import { isServer } from "solid-js/web";
 import type { Database } from "./generated-types";
 
 const supabaseUrl = import.meta.env.VITE_SUPABASE_URL;
 const supabaseAnonKey = import.meta.env.VITE_SUPABASE_ANON_KEY;
 
-export const supabase = createClient<Database>(supabaseUrl, supabaseAnonKey, { auth: { persistSession: !isServer } });
+export const supabase = createClient<Database>(supabaseUrl, supabaseAnonKey);
 
 export function translateError(error: AuthError): string {
   switch (error.status) {

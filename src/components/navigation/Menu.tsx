@@ -7,7 +7,7 @@ import NewsIcon from "~/components/ui/icons/NewsIcon";
 import RegistrationIcon from "~/components/ui/icons/RegistrationIcon";
 import { logout } from "~/lib/supabase/auth-service";
 
-export default function Menu({ isLoggendIn = false }) {
+export default function Menu(params: { isLoggendIn: boolean }) {
   const navigate = useNavigate();
 
   async function doLogout() {
@@ -17,7 +17,7 @@ export default function Menu({ isLoggendIn = false }) {
 
   return (
     <div class="z-50 flex flex-col gap-8 bg-base-300 p-4">
-      {isLoggendIn ? (
+      {params.isLoggendIn ? (
         <>
           <A href="/settings" class="flex h-8 items-center gap-3">
             <GearIcon />

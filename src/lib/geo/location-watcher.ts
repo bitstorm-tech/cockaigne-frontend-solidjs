@@ -1,10 +1,11 @@
+import { isServer } from "solid-js/web";
 import { setLocation } from "~/lib/stores/location-store";
 import { getUseCurrentLocation, saveLocation } from "~/lib/supabase/location-service";
 
 let watcherId = -1;
 
 export function startLocationWatching() {
-  if (watcherId === -1) {
+  if (watcherId === -1 && !isServer) {
     console.log("[LocationWatcher] start watching ...");
     watcherId = window.navigator.geolocation.watchPosition((geolocationPosition) => {
       const currentLocation = {
