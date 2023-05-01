@@ -19,7 +19,7 @@ export function startLocationWatching() {
 }
 
 export function stopLocationWatching() {
-  if (watcherId) {
+  if (watcherId && !isServer) {
     console.log("[LocationWatcher] stop watching ...");
     window.navigator.geolocation.clearWatch(watcherId);
     watcherId = -1;
