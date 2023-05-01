@@ -3,6 +3,7 @@ import {
   getDealsByFilter,
   getHotDeals,
   getLikes,
+  rotateByCurrentTime,
   toggleHotDeal as toggleHot,
   toggleLike as toggleLik
 } from "~/lib/supabase/deal-service";
@@ -57,7 +58,7 @@ function markDealsAsHotAndLiked() {
       isLiked: likes().some((like) => like.deal_id === d.id)
     };
   });
-  setDeals(markedDeals);
+  setDeals(rotateByCurrentTime(markedDeals));
 
   const markedHotDeals = hotDeals().map((d) => {
     return { ...d, isLiked: likes().some((like) => like.deal_id === d.id) };

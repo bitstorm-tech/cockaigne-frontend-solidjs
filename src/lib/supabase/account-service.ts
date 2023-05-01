@@ -1,5 +1,6 @@
 import { munichPosition, type Position, toPostGisPoint } from "~/lib/geo/geo.types";
 import { getUserId } from "~/lib/supabase/auth-service";
+import { getLocationFromAddress } from "~/lib/supabase/location-service";
 import type { Account, AccountInsert, AccountUpdate } from "./public-types";
 import { supabase, translateError } from "./supabase-client";
 
@@ -72,27 +73,11 @@ export async function updateAccount(update: AccountUpdate): Promise<string | und
   }
 }
 
-export async function getLocation(street: string, houseNumber: string, city: string, zip: string): Promise<Position | null> {
-  const query = `format=json&street=${houseNumber} ${street}&city=${city}&postalcode=${zip}`;
-  const response = await fetch(`https://nominatim.openstreetmap.org/search?${query}`);
-  const geoInformation = await response.json();
-
-  if (geoInformation.length === 0) {
-    console.error("Can't find location for address:", street, houseNumber, zip, city);
-    return null;
-  }
-
-  return {
-    latitude: geoInformation[0].lat,
-    longitude: geoInformation[0].lon
-  };
-}
-
 export async function saveAccount(account: AccountInsert): Promise<string | undefined> {
   let position: Position = munichPosition;
 
   if (account.is_dealer) {
-    const _position = await getLocation(account.street!, account.house_number!, account.city!, account.zip + "");
+    const _position = await getLocationFromAddress(account.street!, account.house_number!, account.city!, account.zip + "");
 
     if (!_position) {
       return "Adresse ist ungültig";
@@ -145,4 +130,19 @@ export async function getUsername(userId?: string): Promise<string> {
   }
 
   return data.username;
+}
+
+export async function getLocation(): Promise<Position> {
+  const userId = await getUserId();
+
+  if (!userId) return munichPosition;
+
+  const { error, data } = await supabase.from("accounts").select("location").eq("id", userId).single();
+
+  if (error) {
+    console.error("Can't get location:", error.message);
+    return munichPosition;
+  }
+
+  return data.location;
 }

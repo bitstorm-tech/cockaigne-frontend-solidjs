@@ -4,6 +4,7 @@ import Button from "~/components/ui/Button";
 import Checkbox from "~/components/ui/Checkbox";
 import Modal from "~/components/ui/Modal";
 import RangeSelect from "~/components/ui/RangeSelect";
+import { searchRadius, setSearchRadius } from "~/lib/stores/location-store";
 import { getCategories } from "~/lib/supabase/category-service";
 import { getSearchRadius, saveSearchRadius } from "~/lib/supabase/location-service";
 
@@ -12,7 +13,6 @@ export const [showDealFilterModal, setShowDealFilterModal] = createSignal(false)
 const saveSearchRadiusDebounce = debounce((radius: number) => saveSearchRadius(radius).then(), 2000);
 
 export default function DealFilterModal() {
-  const [searchRadius, setSearchRadius] = createSignal(0);
   const [categories] = createResource(getCategories);
   const button = <Button onClick={() => setShowDealFilterModal(false)}>Übernehmen</Button>;
 

@@ -105,3 +105,24 @@ export async function getCurrentAddress(): Promise<string[]> {
   const longAddress = await getAddress(location);
   return addressToShortString(longAddress);
 }
+
+export async function getLocationFromAddress(
+  street: string,
+  houseNumber: string,
+  city: string,
+  zip: string
+): Promise<Position | null> {
+  const query = `format=json&street=${houseNumber} ${street}&city=${city}&postalcode=${zip}`;
+  const response = await fetch(`https://nominatim.openstreetmap.org/search?${query}`);
+  const geoInformation = await response.json();
+
+  if (geoInformation.length === 0) {
+    console.error("Can't find location for address:", street, houseNumber, zip, city);
+    return null;
+  }
+
+  return {
+    latitude: geoInformation[0].lat,
+    longitude: geoInformation[0].lon
+  };
+}

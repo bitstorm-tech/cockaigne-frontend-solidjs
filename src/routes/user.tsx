@@ -10,15 +10,12 @@ import UserHeader from "~/components/user/UserHeader";
 import UserHotDealList from "~/components/user/UserHotDealList";
 import { deals, loadActiveAndHotDeals } from "~/lib/stores/deal-store";
 import { setCurrentPage } from "~/lib/stores/navigation-store";
-import { rotateByCurrentTime } from "~/lib/supabase/deal-service";
 
 export default function User() {
   const [tabIndex, setTabIndex] = createSignal(0);
   loadActiveAndHotDeals().then();
 
   onMount(async () => setCurrentPage("home"));
-
-  const sortedDeals = rotateByCurrentTime(deals());
 
   const emptyContent = (
     <EmptyContent>
@@ -52,7 +49,7 @@ export default function User() {
       </div>
       <Suspense>
         <Show when={tabIndex() === 0}>
-          <UserDealList deals={sortedDeals} emptyContent={emptyContent} />
+          <UserDealList deals={deals()} emptyContent={emptyContent} />
         </Show>
         <Show when={tabIndex() === 1}>
           <UserHotDealList />

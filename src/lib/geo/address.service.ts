@@ -31,7 +31,7 @@ export async function getAddress(position: Position): Promise<Address | undefine
   }
 }
 
-export async function getLocation(address: Address | string): Promise<Position | undefined> {
+export async function getLocationFromAddress(address: Address | string): Promise<Position | undefined> {
   const url = `https://nominatim.openstreetmap.org/search?format=json&q=${address}`;
   const response = await fetch(url);
 
@@ -55,7 +55,5 @@ export function addressToString(address: Address): string {
 }
 
 export function addressToShortString(address: Address | undefined): string[] {
-  return address
-    ? [`${address.street} ${address.houseNumber}`, `${address.postcode} ${address.city}`]
-    : ["Keine Adresse"];
+  return address ? [`${address.street} ${address.houseNumber}`, `${address.postcode} ${address.city}`] : ["Keine Adresse"];
 }

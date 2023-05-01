@@ -5,6 +5,8 @@ import Modal from "~/components/ui/Modal";
 import Textarea from "~/components/ui/Textarea";
 import { addressToString, getAddress } from "~/lib/geo/address.service";
 import { Position } from "~/lib/geo/geo.types";
+import { startLocationWatching, stopLocationWatching } from "~/lib/geo/location-watcher";
+import { setLocation } from "~/lib/stores/location-store";
 import { getLocation, useCurrentLocation } from "~/lib/supabase/location-service";
 
 export const [showLocationSettingsModal, setShowLocationSettingsModal] = createSignal(false);
@@ -42,7 +44,7 @@ export default function LocationSettingsModal() {
         longitude: +addresses[0].lon
       };
 
-      // locationStore.set(location);
+      setLocation(location);
     }
 
     setLoading(false);
@@ -50,7 +52,7 @@ export default function LocationSettingsModal() {
 
   async function searchCurrentLocation(checked: boolean) {
     setUseCurLocation(checked);
-    // useCurrentLocation ? LocationService.startWatching() : LocationService.stopWatching();
+    checked ? startLocationWatching() : stopLocationWatching();
   }
 
   return (
