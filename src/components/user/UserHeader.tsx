@@ -1,15 +1,18 @@
-import { createResource, For, Suspense } from "solid-js";
+import { createEffect, createResource, createSignal, For, Suspense } from "solid-js";
 import LocationIcon from "~/components/ui/icons/LocationIcon";
 import DealsBadge from "~/components/user/DealsBadge";
 import FavoriteDealerBadge from "~/components/user/FavoriteDealerBadge";
 import HotsBadge from "~/components/user/HotsBadge";
 import ProfileImage from "~/components/user/ProfileImage";
+import { location } from "~/lib/stores/location-store";
 import { getUsername } from "~/lib/supabase/account-service";
 import { getCurrentAddress } from "~/lib/supabase/location-service";
 
 export default function UserHeader() {
-  const [address] = createResource(getCurrentAddress);
   const [username] = createResource(() => getUsername(), { initialValue: "" });
+  const [address, setAddress] = createSignal<string[]>([]);
+
+  createEffect(async () => setAddress(await getCurrentAddress(location())));
 
   return (
     <div class="flex justify-between text-[#dbdce6]">

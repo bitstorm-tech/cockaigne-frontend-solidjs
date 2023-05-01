@@ -1,13 +1,7 @@
-import { debounce } from "lodash";
-import { Position } from "~/lib/geo/geo.types";
 import { setLocation } from "~/lib/stores/location-store";
-import { saveLocation } from "~/lib/supabase/location-service";
+import { getUseCurrentLocation, saveLocation } from "~/lib/supabase/location-service";
 
 let watcherId = -1;
-
-const saveLocationDebounced = debounce(async (location: Position) => {
-  await saveLocation(location);
-}, 10000);
 
 export function startLocationWatching() {
   if (watcherId === -1) {
@@ -18,7 +12,7 @@ export function startLocationWatching() {
         latitude: geolocationPosition.coords.latitude
       };
       setLocation(currentLocation);
-      saveLocationDebounced(currentLocation);
+      saveLocation(currentLocation).then();
     });
   }
 }
@@ -29,4 +23,9 @@ export function stopLocationWatching() {
     window.navigator.geolocation.clearWatch(watcherId);
     watcherId = -1;
   }
+}
+
+export async function initLocationWatcher() {
+  const useCurrentLocation = await getUseCurrentLocation();
+  useCurrentLocation ? startLocationWatching() : stopLocationWatching();
 }

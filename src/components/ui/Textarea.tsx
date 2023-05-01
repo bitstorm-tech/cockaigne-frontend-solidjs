@@ -7,6 +7,7 @@ export default function Textarea(props: {
   placeholder?: string;
   value?: string;
   disabled?: boolean;
+  resize?: boolean;
   onChange?: (value: string) => void;
   onEnter?: () => void;
 }) {
@@ -14,6 +15,7 @@ export default function Textarea(props: {
     {
       id: props.label?.toLowerCase(),
       value: "",
+      resize: true,
       onChange: () => {},
       onEnter: () => {}
     },
@@ -33,6 +35,7 @@ export default function Textarea(props: {
       </label>
       <textarea
         class="textarea-bordered textarea focus:border-primary focus:outline-none"
+        classList={{ "resize-none": !props.resize }}
         id={props.id}
         rows={props.lines}
         placeholder={props.placeholder}

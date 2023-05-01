@@ -1,25 +1,23 @@
 import { createSignal } from "solid-js";
+import AddressSearch, { SearchResult } from "~/components/ui/AddressSearch";
 import Button from "~/components/ui/Button";
 import Checkbox from "~/components/ui/Checkbox";
 import Modal from "~/components/ui/Modal";
-import Textarea from "~/components/ui/Textarea";
 import { addressToString, getAddress } from "~/lib/geo/address.service";
-import { Position } from "~/lib/geo/geo.types";
 import { startLocationWatching, stopLocationWatching } from "~/lib/geo/location-watcher";
 import { setLocation } from "~/lib/stores/location-store";
-import { getLocation, useCurrentLocation } from "~/lib/supabase/location-service";
+import { getLocation, getUseCurrentLocation, saveLocation, saveUseCurrentLocation } from "~/lib/supabase/location-service";
 
 export const [showLocationSettingsModal, setShowLocationSettingsModal] = createSignal(false);
 
 export default function LocationSettingsModal() {
-  const [loading, setLoading] = createSignal(false);
   const [address, setAddress] = createSignal("");
   const [useCurLocation, setUseCurLocation] = createSignal(false);
 
   const button = <Button onClick={() => setShowLocationSettingsModal(false)}>Übernehmen</Button>;
 
   async function onShow() {
-    setUseCurLocation(await useCurrentLocation());
+    setUseCurLocation(await getUseCurrentLocation());
     const location = await getLocation();
     const newAddress = await getAddress(location);
 
@@ -28,31 +26,16 @@ export default function LocationSettingsModal() {
     }
   }
 
-  async function search() {
-    setLoading(true);
-    const url = `https://nominatim.openstreetmap.org/search?format=json&q=${address}`;
-    const response = await fetch(url);
-
-    if (response.ok) {
-      const addresses = await response.json();
-      if (addresses.length === 0) {
-        return;
-      }
-
-      const location: Position = {
-        latitude: +addresses[0].lat,
-        longitude: +addresses[0].lon
-      };
-
-      setLocation(location);
-    }
-
-    setLoading(false);
-  }
-
   async function searchCurrentLocation(checked: boolean) {
     setUseCurLocation(checked);
+    saveUseCurrentLocation(checked).then();
     checked ? startLocationWatching() : stopLocationWatching();
+  }
+
+  async function selectAddress(searchResult: SearchResult) {
+    setAddress(searchResult.address);
+    setLocation(searchResult.location);
+    await saveLocation(searchResult.location);
   }
 
   return (
@@ -63,10 +46,7 @@ export default function LocationSettingsModal() {
       buttons={button}
     >
       <div class="m-2 flex flex-col gap-3">
-        <Textarea label="Adresse" value={address()} onEnter={search} disabled={useCurLocation()} lines={2} />
-        <Button onClick={search} disabled={useCurLocation()} loading={loading()}>
-          Suchen
-        </Button>
+        <AddressSearch address={address()} onAddressSelected={selectAddress} disabled={useCurLocation()} />
         <Checkbox label="Aktuellen Standort verwenden" checked={useCurLocation()} onChange={searchCurrentLocation} />
       </div>
     </Modal>

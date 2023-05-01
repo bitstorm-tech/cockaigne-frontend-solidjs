@@ -1,10 +1,10 @@
 import { addressToShortString, getAddress } from "~/lib/geo/address.service";
-import { munichPosition, Position, toPostGisPoint } from "~/lib/geo/geo.types";
+import { centerOfGermany, Position, toPostGisPoint } from "~/lib/geo/geo.types";
 import { getUserId } from "~/lib/supabase/auth-service";
 import { DealFilter } from "~/lib/supabase/deal-service";
 import { supabase } from "./supabase-client";
 
-export async function useCurrentLocation(): Promise<boolean> {
+export async function getUseCurrentLocation(): Promise<boolean> {
   const userId = await getUserId();
   const { error, data } = await supabase.from("accounts").select("use_current_location").eq("id", userId).single();
 
@@ -31,7 +31,7 @@ export async function getLocation(): Promise<Position> {
 
   if (error || !data.location) {
     console.error("Can't get location:", error?.message);
-    return munichPosition;
+    return centerOfGermany;
   }
 
   const longitude = data.location.coordinates[0];
@@ -73,7 +73,7 @@ export async function createFilterByCurrentLocationAndSelectedCategories(): Prom
           longitude: data.location.coordinates[0],
           latitude: data.location.coordinates[1]
         }
-      : munichPosition
+      : centerOfGermany
   };
 }
 
@@ -100,10 +100,10 @@ export async function saveSearchRadius(searchRadius: number) {
   await supabase.from("accounts").update({ search_radius: searchRadius }).eq("id", userId);
 }
 
-export async function getCurrentAddress(): Promise<string[]> {
-  const location = await getLocation();
-  const longAddress = await getAddress(location);
-  return addressToShortString(longAddress);
+export async function getCurrentAddress(location?: Position): Promise<string[]> {
+  const loc = location || (await getLocation());
+  const address = await getAddress(loc);
+  return addressToShortString(address);
 }
 
 export async function getLocationFromAddress(

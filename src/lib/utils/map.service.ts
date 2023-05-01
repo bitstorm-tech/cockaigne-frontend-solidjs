@@ -14,9 +14,10 @@ import VectorSource from "ol/source/Vector";
 import { Fill, Icon, Stroke, Style } from "ol/style";
 import { createEffect } from "solid-js";
 import { fromOpenLayersCoordinate, Position, toOpenLayersCoordinate } from "~/lib/geo/geo.types";
-import { location, searchRadius } from "~/lib/stores/location-store";
+import { stopLocationWatching } from "~/lib/geo/location-watcher";
+import { location, searchRadius, setLocation } from "~/lib/stores/location-store";
 import { DealFilter, getDealsByFilter } from "~/lib/supabase/deal-service";
-import { getLocation, saveLocation, useCurrentLocation } from "~/lib/supabase/location-service";
+import { getLocation, saveLocation, saveUseCurrentLocation } from "~/lib/supabase/location-service";
 import { ActiveDeal } from "~/lib/supabase/public-types";
 import { getIconPathById } from "./icon-mapping";
 
@@ -92,13 +93,10 @@ export async function initMapService(htmlElementId: string) {
   });
 
   map.on("click", async (event) => {
-    const _useCurrentLocation = await useCurrentLocation();
-
-    if (_useCurrentLocation) {
-      return;
-    }
-
-    moveCircle(event.coordinate);
+    saveUseCurrentLocation(false).then();
+    stopLocationWatching();
+    moveCircle(event.coordinate).then();
+    setLocation(fromOpenLayersCoordinate(event.coordinate));
     saveLocationDebounced(fromOpenLayersCoordinate(event.coordinate));
   });
 
@@ -108,16 +106,17 @@ export async function initMapService(htmlElementId: string) {
   });
 }
 
-function jumpToLocation(position: Position) {
+export function jumpToLocation(position: Position) {
   const center = toOpenLayersCoordinate(position);
-  moveCircle(center);
+  view.setCenter(center);
+  moveCircle(center).then();
 }
 
 export async function jumpToCurrentLocation() {
   const postion = await getLocation();
   const center = toOpenLayersCoordinate(postion);
   view.setCenter(center);
-  moveCircle();
+  moveCircle().then();
 }
 
 function setRadius(radius: number) {
@@ -136,9 +135,7 @@ function setDeals(deals: ActiveDeal[]) {
 }
 
 async function moveCircle(location?: Coordinate) {
-  const _location = await getLocation();
-  const center = toOpenLayersCoordinate(_location);
-  const newCoordinates = location ? location : center;
+  const newCoordinates = location || toOpenLayersCoordinate(await getLocation());
   circle?.setCenter(newCoordinates);
   centerPoint?.setCenter(newCoordinates);
 }

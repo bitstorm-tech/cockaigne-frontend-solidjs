@@ -1,4 +1,4 @@
-import { munichPosition, type Position, toPostGisPoint } from "~/lib/geo/geo.types";
+import { centerOfGermany, type Position, toPostGisPoint } from "~/lib/geo/geo.types";
 import { getUserId } from "~/lib/supabase/auth-service";
 import { getLocationFromAddress } from "~/lib/supabase/location-service";
 import type { Account, AccountInsert, AccountUpdate } from "./public-types";
@@ -74,7 +74,7 @@ export async function updateAccount(update: AccountUpdate): Promise<string | und
 }
 
 export async function saveAccount(account: AccountInsert): Promise<string | undefined> {
-  let position: Position = munichPosition;
+  let position: Position = centerOfGermany;
 
   if (account.is_dealer) {
     const _position = await getLocationFromAddress(account.street!, account.house_number!, account.city!, account.zip + "");
@@ -130,19 +130,4 @@ export async function getUsername(userId?: string): Promise<string> {
   }
 
   return data.username;
-}
-
-export async function getLocation(): Promise<Position> {
-  const userId = await getUserId();
-
-  if (!userId) return munichPosition;
-
-  const { error, data } = await supabase.from("accounts").select("location").eq("id", userId).single();
-
-  if (error) {
-    console.error("Can't get location:", error.message);
-    return munichPosition;
-  }
-
-  return data.location;
 }
