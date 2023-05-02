@@ -11,12 +11,12 @@ export default function ProfileImage(props: { id?: string; size?: number; isDeal
   // const [profileImageUrl] = createResource(async () => await getProfileImage({ isDealer: props.isDealer }));
 
   return (
-    <div class="avatar cursor-pointer" classList={{ invisible: menuOpen() }}>
-      <Suspense>
+    <Suspense>
+      <div class="avatar cursor-pointer" classList={{ invisible: menuOpen() }}>
         <div class="rounded-full ring-2 ring-[#556368]" style={style}>
           <img loading="lazy" src={profileImageUrl()} alt="Profile" />
         </div>
-      </Suspense>
-    </div>
+      </div>
+    </Suspense>
   );
 }
