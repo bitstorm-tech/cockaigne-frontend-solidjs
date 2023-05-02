@@ -8,8 +8,13 @@ import UserDealList from "~/components/user/UserDealList";
 import UserFavoriteDealerList from "~/components/user/UserFavoriteDealerList";
 import UserHeader from "~/components/user/UserHeader";
 import UserHotDealList from "~/components/user/UserHotDealList";
+import { initLocationWatcher } from "~/lib/geo/location-watcher";
 import { deals, loadActiveAndHotDeals } from "~/lib/stores/deal-store";
+import { initLocationStore } from "~/lib/stores/location-store";
 import { setCurrentPage } from "~/lib/stores/navigation-store";
+
+initLocationStore().then();
+initLocationWatcher().then();
 
 export default function User() {
   const [tabIndex, setTabIndex] = createSignal(0);

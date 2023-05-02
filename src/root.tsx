@@ -2,14 +2,9 @@
 import { Body, ErrorBoundary, FileRoutes, Head, Html, Link, Meta, Routes, Scripts, Title } from "solid-start";
 import Footer from "~/components/navigation/Footer";
 import Header from "~/components/navigation/Header";
-import { initLocationWatcher } from "~/lib/geo/location-watcher";
-import { initLocationStore } from "~/lib/stores/location-store";
 import "./root.css";
 
 export default function Root() {
-  initLocationStore().then();
-  initLocationWatcher().then();
-
   return (
     <Html lang="en" data-theme="dark">
       <Head>
