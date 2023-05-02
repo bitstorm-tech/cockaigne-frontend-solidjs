@@ -9,7 +9,7 @@ import { getUsername } from "~/lib/supabase/account-service";
 import { getCurrentAddress } from "~/lib/supabase/location-service";
 
 export default function UserHeader() {
-  const [username] = createResource(() => getUsername(), { initialValue: "" });
+  const [username] = createResource(() => getUsername());
   const [address, setAddress] = createSignal<string[]>([]);
 
   createEffect(async () => setAddress(await getCurrentAddress(location())));

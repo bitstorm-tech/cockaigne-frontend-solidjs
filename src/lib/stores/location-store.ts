@@ -1,8 +1,8 @@
 import { createSignal } from "solid-js";
-import { centerOfGermany } from "~/lib/geo/geo.types";
+import { Position } from "~/lib/geo/geo.types";
 import { getLocation, getSearchRadius } from "~/lib/supabase/location-service";
 
-export const [location, setLocation] = createSignal(centerOfGermany);
+export const [location, setLocation] = createSignal<Position>();
 export const [searchRadius, setSearchRadius] = createSignal(500);
 
 export async function initLocationStore() {
