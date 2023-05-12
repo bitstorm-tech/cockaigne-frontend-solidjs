@@ -5,7 +5,7 @@
     "dev": "solid-start dev",
     "build": "solid-start build",
     "start": "solid-start start",
-    "update": "ncu -u && pnpm i"
+    "ncu": "ncu -u && pnpm i"
   },
   "type": "module",
   "dependencies": {
